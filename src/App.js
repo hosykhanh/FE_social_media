@@ -1,25 +1,48 @@
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
+import { useSelector } from 'react-redux';
+import { routes } from './routes';
+import * as role from './constants/index';
+import DefaultLayout from './layouts/DefaultLayout/DefaultLayout';
+import CustomFragment from './components/CustomFragment/CustomFragment';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const user = useSelector((state) => state.user);
+
+    return (
+        <div>
+            <Router>
+                <Routes>
+                    {routes.map((route, index) => {
+                        const Page = route.page;
+                        let Layout = DefaultLayout;
+                        const isPrivate = route?.isPrivate;
+                        const isAuth = user?.role === role.ROLE_USER;
+
+                        if (route.layout) {
+                            Layout = route.layout;
+                        }
+
+                        if (route.layout === null) {
+                            Layout = CustomFragment;
+                        }
+
+                        return (
+                            <Route
+                                key={index}
+                                path={isPrivate ? (isAuth ? route?.path : '/') : route?.path}
+                                element={
+                                    <Layout>
+                                        <Page />
+                                    </Layout>
+                                }
+                            />
+                        );
+                    })}
+                </Routes>
+            </Router>
+        </div>
+    );
 }
 
 export default App;
