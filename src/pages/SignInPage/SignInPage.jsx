@@ -111,7 +111,7 @@ const SignInPage = () => {
                                 type="password"
                                 onChange={handleOnChangePassword}
                                 value={password}
-                                id="mật khẩu"
+                                id="password"
                                 required
                                 placeholder="Enter your pasword"
                             />
@@ -121,7 +121,7 @@ const SignInPage = () => {
                             Forgot password?
                         </a>
                         <Loading isLoading={isLoading}>
-                            <Button className={cx('btn-form')} primary large>
+                            <Button className={cx('btn-form')} type="primary">
                                 Login
                             </Button>
                         </Loading>

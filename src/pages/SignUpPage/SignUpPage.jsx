@@ -1,9 +1,12 @@
 import React from 'react';
-import { Button, Checkbox, DatePicker, Form, Image, Input, Select } from 'antd';
+import { Button, DatePicker, Form, Image, Input, Radio, Select } from 'antd';
 import images from '../../assets/index';
 
 import styles from './SignUpPage.module.scss';
 import classNames from 'classnames/bind';
+import { useNavigate } from 'react-router-dom';
+import { signUpUser } from '../../services/userService';
+import * as messages from '../../components/Message/Message';
 
 const cx = classNames.bind(styles);
 
@@ -40,9 +43,22 @@ const tailFormItemLayout = {
 };
 
 const SignUpPage = () => {
+    const navigate = useNavigate();
+
     const [form] = Form.useForm();
-    const onFinish = (values) => {
-        console.log('Received values of form: ', values);
+
+    const onFinish = async (values) => {
+        try {
+            const res = await signUpUser(values);
+            if (res.status === 'err') {
+                messages.error(res.message);
+                return;
+            }
+            messages.success('Đăng kí thành công');
+            navigate('/sign-in');
+        } catch (error) {
+            messages.error('Đăng kí thất bại');
+        }
     };
     const prefixSelector = (
         <Form.Item name="prefix" noStyle>
@@ -79,7 +95,7 @@ const SignUpPage = () => {
                         scrollToFirstError
                     >
                         <Form.Item
-                            name="nickname"
+                            name="name"
                             label="Nickname"
                             tooltip="What do you want others to call you?"
                             rules={[
@@ -125,7 +141,7 @@ const SignUpPage = () => {
                         </Form.Item>
 
                         <Form.Item
-                            name="confirm"
+                            name="confirmPassword"
                             label="Confirm Password"
                             dependencies={['password']}
                             hasFeedback
@@ -159,15 +175,15 @@ const SignUpPage = () => {
                                 },
                             ]}
                         >
-                            <Select placeholder="select your gender">
-                                <Option value="male">Male</Option>
-                                <Option value="female">Female</Option>
-                                <Option value="other">Other</Option>
-                            </Select>
+                            <Radio.Group>
+                                <Radio value="Male">Male</Radio>
+                                <Radio value="Female">Femail</Radio>
+                                <Radio value="Other">Other</Radio>
+                            </Radio.Group>
                         </Form.Item>
 
                         <Form.Item
-                            name="date"
+                            name="dateOfBirth"
                             label="Date"
                             rules={[
                                 {
@@ -210,20 +226,7 @@ const SignUpPage = () => {
                             <Input />
                         </Form.Item>
 
-                        <Form.Item
-                            name="agreement"
-                            valuePropName="checked"
-                            rules={[
-                                {
-                                    validator: (_, value) =>
-                                        value
-                                            ? Promise.resolve()
-                                            : Promise.reject(new Error('Should accept agreement')),
-                                },
-                            ]}
-                            {...tailFormItemLayout}
-                        >
-                            <Checkbox>I have read the agreement</Checkbox>
+                        <Form.Item>
                             <div className={cx('navigation-login')}>
                                 Do you have an account? <a href="/sign-in">Login</a>
                             </div>

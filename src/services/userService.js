@@ -2,17 +2,18 @@ import axios from 'axios';
 import axiosJWT from './axiosService';
 
 const signUpUser = async (data) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/sign-up`, data);
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/users`, data);
+    console.log(data);
     return res.data;
 };
 
 const getUser = async (id) => {
-    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/user/${id}`);
+    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/users/${id}`);
     return res.data;
 };
 
 const getAllUser = async ({ name }) => {
-    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/user`, {
+    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/users`, {
         params: {
             name: name,
         },
