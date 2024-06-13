@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const loginUser = async (data) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/sign-in`, data);
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, data);
     return res.data;
 };
 

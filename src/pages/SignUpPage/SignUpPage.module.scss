@@ -13,6 +13,10 @@
             font-size: 30px;
             color: #4176cb;
             font-weight: 500;
+
+            a {
+                color: #4176cb;
+            }
         }
 
         .header {
@@ -24,6 +28,14 @@
 
         .navigation-login {
             float: right;
+
+            a {
+                color: blue;
+            }
+        }
+
+        .btn-form {
+            background-color: #4176cb;
         }
     }
 

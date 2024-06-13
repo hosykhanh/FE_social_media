@@ -1,0 +1,131 @@
+.wrapper {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    min-width: 100px;
+    padding: 9px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    user-select: none;
+
+    + .wrapper {
+        margin-left: 8px;
+    }
+
+    &:has(span):has(.full-width) {
+        margin-left: 0;
+    }
+
+    &.disable {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+}
+
+// Button type
+.rounded {
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
+    border-color: rgba(22, 24, 35, 0.12);
+
+    &:hover {
+        border-color: rgba(22, 24, 35, 0.2);
+        background-color: rgba(22, 24, 35, 0.03);
+    }
+}
+
+.square {
+    padding: 0;
+    min-width: 0px;
+    border-radius: 0;
+}
+
+.outline {
+    color: #4176cb;
+    border-color: currentColor;
+
+    &:hover {
+        background-color: rgba(254, 44, 85, 0.06);
+        border-color: #4176cb;
+    }
+}
+
+.primary {
+    background-color: #4176cb;
+    color: #fff;
+    border-color: #4176cb;
+
+    &:hover {
+        border-color: #4176cb;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06)), #4176cb;
+    }
+}
+
+.danger {
+    background-color: #ff4d4f;
+    color: #fff;
+    border-color: #ff4d4f;
+
+    &:hover {
+        border-color: #ff4d4f;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06)), #ff4d4f;
+    }
+}
+
+.normal {
+    color: rgb(22, 24, 35);
+    border-color: rgba(22, 24, 35, 0.12);
+
+    &:hover {
+        border-color: rgb(208, 209, 211);
+        background-color: rgb(248, 248, 248);
+    }
+}
+
+.text {
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+// Button size
+.small {
+    min-width: 88px;
+    padding: 4px 16px;
+}
+
+.large {
+    min-width: 140px;
+    padding: 14px 16px;
+}
+
+.icon {
+    display: inline-block;
+    width: 24px;
+    text-align: center;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+}
+
+.icon + .title,
+.title + .icon {
+    margin-left: 4px;
+}
+
+.full-width {
+    flex: 1;
+}
+
+.textLeft {
+    text-align: left;
+}
+
+.textCenter {
+    justify-content: center;
+}

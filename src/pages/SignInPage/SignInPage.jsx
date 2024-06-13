@@ -11,7 +11,8 @@ import * as messages from '../../components/Message/Message';
 import { updateUser } from '../../redux/slice/userSlice';
 import checkStatusResponse from '../../utils/checkStatusResponse';
 import { jwtDecode } from 'jwt-decode';
-import { Button, Image, Input, message } from 'antd';
+import { Image, Input, message } from 'antd';
+import Button from '../../components/Button/Button';
 import Loading from '../../components/Loading/Loading';
 import images from '../../assets';
 import { MailOutlined, SignatureOutlined } from '@ant-design/icons';
@@ -82,7 +83,7 @@ const SignInPage = () => {
             <div className={cx('wapper-content')}>
                 <form onSubmit={(e) => handleSubmit(e)} className={cx('content')}>
                     <div className={cx('app-name')}>
-                        <img src={images.logo} alt="" width="25px" /> HSK SOCIAL MEDIA
+                        <img src={images.logo} alt="" width="25px" /> <a href="/">HSK SOCIAL MEDIA</a>
                     </div>
                     <div className={cx('form')}>
                         <div className={cx('form-title')}>Login</div>

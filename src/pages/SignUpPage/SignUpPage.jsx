@@ -78,7 +78,7 @@ const SignUpPage = () => {
             <div className={cx('wapper-content')}>
                 <div className={cx('content')}>
                     <div className={cx('app-name')}>
-                        <img src={images.logo} alt="" width="25px" /> HSK SOCIAL MEDIA
+                        <img src={images.logo} alt="" width="25px" /> <a href="/">HSK SOCIAL MEDIA</a>
                     </div>
                     <div className={cx('header')}>Register</div>
                     <Form
@@ -232,7 +232,7 @@ const SignUpPage = () => {
                             </div>
                         </Form.Item>
                         <Form.Item {...tailFormItemLayout}>
-                            <Button type="primary" htmlType="submit">
+                            <Button className={cx('btn-form')} type="primary" htmlType="submit">
                                 Register
                             </Button>
                         </Form.Item>
