@@ -1,0 +1,28 @@
+.header {
+    height: 50px;
+}
+
+.wrapper {
+    padding: 10px;
+    background-color: #4176cb;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 11;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    .app-name {
+        display: flex;
+
+        .name {
+            font-size: 20px;
+            color: #ffffff;
+        }
+    }
+
+    .logo {
+        height: 30px;
+        margin: 0 10px;
+    }
+}

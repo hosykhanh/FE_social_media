@@ -6,7 +6,7 @@ const loginUser = async (data) => {
 };
 
 const logoutUser = async () => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/log-out`);
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/logout`);
     return res.data;
 };
 
