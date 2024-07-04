@@ -11,6 +11,7 @@ import { updateUser } from './redux/slice/userSlice';
 import { isJsonString } from './utils';
 import { jwtDecode } from 'jwt-decode';
 import Loading from './components/Loading/Loading';
+import SignInPage from './pages/SignInPage/SignInPage';
 
 function App() {
     const [loading, setIsLoading] = useState(false);
@@ -19,7 +20,7 @@ function App() {
 
     const handleGetDetailUser = async (id, access_token) => {
         const res = await userService.getUser(id, access_token);
-        dispatch(updateUser({ ...res?.data, access_token }));
+        dispatch(updateUser({ ...res, access_token }));
     };
 
     const handleDecoded = () => {
@@ -52,7 +53,7 @@ function App() {
                             const Page = route.page;
                             let Layout = DefaultLayout;
                             const isPrivate = route?.isPrivate;
-                            const isAuth = user?.role === role.ROLE_USER;
+                            const isAuth = user?.isAdmin === role.ROLE_USER;
 
                             if (route.layout) {
                                 Layout = route.layout;
@@ -65,12 +66,8 @@ function App() {
                             return (
                                 <Route
                                     key={index}
-                                    path={isPrivate ? (isAuth ? route?.path : '/') : route?.path}
-                                    element={
-                                        <Layout>
-                                            <Page />
-                                        </Layout>
-                                    }
+                                    path={user ? (isPrivate ? (isAuth ? route?.path : '/') : route?.path) : '/sign-in'}
+                                    element={<Layout>{user ? <Page /> : <SignInPage />}</Layout>}
                                 />
                             );
                         })}

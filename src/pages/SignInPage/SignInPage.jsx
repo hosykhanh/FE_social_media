@@ -36,7 +36,7 @@ const SignInPage = () => {
 
     const handleGetDetailUser = async (id, access_token) => {
         const res = await userService.getUser(id, access_token);
-        dispatch(updateUser({ ...res?.data, access_token }));
+        dispatch(updateUser({ ...res, access_token }));
     };
 
     useEffect(() => {
@@ -83,7 +83,7 @@ const SignInPage = () => {
             <div className={cx('wapper-content')}>
                 <form onSubmit={(e) => handleSubmit(e)} className={cx('content')}>
                     <div className={cx('app-name')}>
-                        <img src={images.logo} alt="" width="25px" /> <a href="/">HSK SOCIAL MEDIA</a>
+                        <img src={images.logo} alt="" width="25px" /> <span>HSK SOCIAL MEDIA</span>
                     </div>
                     <div className={cx('form')}>
                         <div className={cx('form-title')}>Login</div>

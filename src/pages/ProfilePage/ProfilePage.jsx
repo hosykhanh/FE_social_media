@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ProfilePage.module.scss';
 import images from '../../assets';
-import { Button, Col, Image, Modal, Row } from 'antd';
+import { Avatar, Button, Col, Image, Modal, Row } from 'antd';
 import {
     CameraOutlined,
     EditOutlined,
@@ -10,13 +10,61 @@ import {
     MailOutlined,
     PhoneOutlined,
     ScheduleOutlined,
+    UserOutlined,
     UserSwitchOutlined,
 } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { useMutation } from 'react-query';
+import checkStatusResponse from '../../utils/checkStatusResponse';
+import * as UserService from '../../services/userService';
+import { success, error } from '../../components/Message/Message';
+import { updateUser } from '../../redux/slice/userSlice';
+import convertISODateToLocalDate from '../../utils/convertISODateToLocalDate';
 
 const cx = classNames.bind(styles);
 
 const ProfilePage = () => {
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
+    const [avatar, setAvatar] = useState('');
+    const [gender, setGender] = useState('Male');
+    const [dateOfBirth, setDateOfBirth] = useState('');
+
+    const mutation = useMutation({
+        mutationFn: (data) => {
+            const { id, ...rests } = data;
+            return UserService.updateUser(id, rests);
+        },
+    });
+
+    const { data, isLoading, isSuccess, isError } = mutation;
+
+    useEffect(() => {
+        if (isSuccess && checkStatusResponse(data)) {
+            dispatch(updateUser({ _id: user.id, ...data?.data }));
+            success('Cập nhật thành công');
+        } else if (isError) {
+            error('Cập nhật thất bại');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSuccess, isError, data]);
+
+    useEffect(() => {
+        if (user) {
+            setEmail(user.email);
+            setName(user.name);
+            setPhone(user.phone);
+            setAddress(user.address);
+            setAvatar(user.avatar);
+            setGender(user.gender);
+            setDateOfBirth(user.dateOfBirth);
+        }
+    }, [user]);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -41,14 +89,23 @@ const ProfilePage = () => {
                     </Button>
                 </div>
                 <div className={cx('wrapper-avatar')}>
-                    <Image src={images.avatar} className={cx('avatar')} />
-                    <div className={cx('username')}>Hồ Sỹ Khanh</div>
+                    {user?.avatar ? (
+                        <Image src={user?.avatar} className={cx('avatar')} />
+                    ) : (
+                        <Avatar
+                            style={{ backgroundColor: '#87d068', border: '5px solid #ffffff' }}
+                            icon={<UserOutlined />}
+                            size={175}
+                        />
+                    )}
+
+                    <div className={cx('username')}>{name}</div>
                 </div>
                 <div className={cx('edit-profile')}>
                     <Button type="primary" onClick={showModal}>
                         <EditOutlined /> Chỉnh sửa trang cá nhân
                     </Button>
-                    <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                    <Modal title="Chỉnh sửa trang cá nhân" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                         <p>Some contents...</p>
                         <p>Some contents...</p>
                         <p>Some contents...</p>
@@ -65,38 +122,38 @@ const ProfilePage = () => {
                                     <label htmlFor="Ngày sinh">
                                         <ScheduleOutlined /> Ngày sinh
                                     </label>
-                                    <div>11-08-2002</div>
+                                    <div>{convertISODateToLocalDate(dateOfBirth || '2000-01-01')}</div>
                                 </div>
                                 <div className={cx('field')}>
                                     <label htmlFor="Giới tính">
                                         <UserSwitchOutlined /> Giới tính
                                     </label>
-                                    <div>Nam</div>
+                                    <div>{gender}</div>
                                 </div>
                                 <div className={cx('field')}>
                                     <label htmlFor="Số điện thoại">
                                         <PhoneOutlined /> Số điện thoại
                                     </label>
-                                    <div>0916262253</div>
+                                    <div>{phone}</div>
                                 </div>
                                 <div className={cx('field')}>
                                     <label htmlFor="Email">
                                         <MailOutlined /> Email
                                     </label>
-                                    <div>hosykhanh1108@gmail.com</div>
+                                    <div>{email}</div>
                                 </div>
                                 <div className={cx('field')}>
                                     <label htmlFor="Địa chỉ">
                                         <EnvironmentOutlined /> Địa chỉ
                                     </label>
-                                    <div>Thôn 8 xã Lạng Sơn huyện Anh Sơn tỉnh Nghệ An</div>
+                                    <div>{address}</div>
                                 </div>
                                 <div>
                                     <Button type="primary" onClick={showModal}>
                                         <EditOutlined /> Chỉnh sửa chi tiết
                                     </Button>
                                     <Modal
-                                        title="Basic Modal"
+                                        title="Chỉnh sửa chi tiết"
                                         open={isModalOpen}
                                         onOk={handleOk}
                                         onCancel={handleCancel}

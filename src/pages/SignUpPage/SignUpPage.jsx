@@ -78,7 +78,7 @@ const SignUpPage = () => {
             <div className={cx('wapper-content')}>
                 <div className={cx('content')}>
                     <div className={cx('app-name')}>
-                        <img src={images.logo} alt="" width="25px" /> <a href="/">HSK SOCIAL MEDIA</a>
+                        <img src={images.logo} alt="" width="25px" /> <span>HSK SOCIAL MEDIA</span>
                     </div>
                     <div className={cx('header')}>Register</div>
                     <Form

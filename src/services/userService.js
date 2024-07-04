@@ -21,4 +21,9 @@ const getAllUser = async ({ name }) => {
     return res.data;
 };
 
-export { signUpUser, getUser, getAllUser, axiosJWT };
+const updateUser = async (id, data) => {
+    const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/users/${id}`, data);
+    return res.data;
+};
+
+export { signUpUser, getUser, getAllUser, updateUser, axiosJWT };
