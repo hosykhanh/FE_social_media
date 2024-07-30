@@ -4,7 +4,7 @@
 
 .navbar-left {
     width: 100%;
-    background-color: #e9e9e9;
+    background-color: #f2f2f2;
     height: calc(100vh - 75px);
     overflow-y: hidden;
     padding-top: 15px;
@@ -12,7 +12,8 @@
     .menu {
         font-size: 14px;
         font-weight: 500;
-        background-color: #e9e9e9;
+        background-color: #f2f2f2;
+        border-right: none !important;
     }
 }
 .navbar-left:hover {
@@ -28,6 +29,10 @@
 .content {
     height: calc(100vh - 60px);
     overflow: hidden;
+
+    .post-content {
+        padding: 0px 10%;
+    }
 }
 
 .content:hover {
@@ -35,14 +40,48 @@
 }
 
 .content-right {
+    height: calc(100vh - 60px);
     overflow: auto;
 }
 
 .slide-wrapper {
-    // position: relative;
     width: 100%;
+    margin-top: 30px;
+    margin-bottom: 20px;
+
+    .slider {
+        width: 90%;
+        border-radius: 5px;
+        padding-left: 8px;
+    }
 }
 
-.slider {
+.contact-user {
     width: 90%;
+
+    .contact {
+        color: #65676b;
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0px 0px 10px 8px;
+        padding-top: 15px;
+        border-top: 1px solid #adadad;
+    }
+
+    .user {
+        cursor: pointer;
+        padding: 5px 8px;
+        align-items: center;
+        border-radius: 8px;
+
+        .name {
+            margin-left: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+
+    .user:hover {
+        background-color: #e9e9e9;
+    }
 }

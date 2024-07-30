@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ProfilePage.module.scss';
 import images from '../../assets';
-import { Avatar, Button, Col, Image, Modal, Row } from 'antd';
+import { Avatar, Button, Col, Image, message, Modal, Row } from 'antd';
 import {
     CameraOutlined,
     EditOutlined,
@@ -13,36 +13,63 @@ import {
     UserOutlined,
     UserSwitchOutlined,
 } from '@ant-design/icons';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useMutation } from 'react-query';
 import checkStatusResponse from '../../utils/checkStatusResponse';
-import * as UserService from '../../services/userService';
+import * as userService from '../../services/userService';
 import { success, error } from '../../components/Message/Message';
 import { updateUser } from '../../redux/slice/userSlice';
 import convertISODateToLocalDate from '../../utils/convertISODateToLocalDate';
+import InputUpload from '../../components/InputUpload/InputUpload';
+import { useParams } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const ProfilePage = () => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.user);
+    const { id } = useParams();
+    const [user, setUser] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenAvatar, setIsModalOpenAvatar] = useState(false);
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
-    const [avatar, setAvatar] = useState('');
+    const [avatar, setAvatar] = useState(null);
     const [gender, setGender] = useState('Male');
     const [dateOfBirth, setDateOfBirth] = useState('');
 
     const mutation = useMutation({
         mutationFn: (data) => {
             const { id, ...rests } = data;
-            return UserService.updateUser(id, rests);
+            return userService.updateUser(id, rests);
         },
     });
 
     const { data, isLoading, isSuccess, isError } = mutation;
+
+    const mutationAvatar = useMutation({
+        mutationFn: (data) => {
+            const { id, ...avatar } = data;
+            return userService.updateAvatar(id, avatar);
+        },
+        onSuccess: (data) => {
+            // Cập nhật thông tin người dùng trong Redux store
+            dispatch(updateUser({ ...user, avatar: data.avatar }));
+            message.success('Avatar cập nhật thành công!');
+        },
+        onError: (error) => {
+            message.error('Có lỗi xảy ra khi cập nhật avatar.');
+        },
+    });
+
+    useEffect(() => {
+        const HandleGetUser = async () => {
+            const res = await userService.getUser(id);
+            setUser(res);
+        };
+        HandleGetUser();
+    }, [id]);
 
     useEffect(() => {
         if (isSuccess && checkStatusResponse(data)) {
@@ -66,6 +93,10 @@ const ProfilePage = () => {
         }
     }, [user]);
 
+    const handleOnChangeAvatar = (file) => {
+        setAvatar(file);
+    };
+
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -76,6 +107,20 @@ const ProfilePage = () => {
 
     const handleCancel = () => {
         setIsModalOpen(false);
+    };
+
+    const showModalAvatar = () => {
+        setIsModalOpenAvatar(true);
+    };
+
+    const handleOkAvatar = () => {
+        console.log(avatar);
+        setIsModalOpenAvatar(false);
+        mutationAvatar.mutate({ id, avatar });
+    };
+
+    const handleCancelAvatar = () => {
+        setIsModalOpenAvatar(false);
     };
 
     return (
@@ -100,6 +145,19 @@ const ProfilePage = () => {
                     )}
 
                     <div className={cx('username')}>{name}</div>
+                </div>
+                <div className={cx('upload-avatar')}>
+                    <div onClick={showModalAvatar}>
+                        <CameraOutlined />
+                    </div>
+                    <Modal
+                        title="Chỉnh sửa ảnh"
+                        open={isModalOpenAvatar}
+                        onOk={handleOkAvatar}
+                        onCancel={handleCancelAvatar}
+                    >
+                        <InputUpload type="file" avatar={avatar} onChange={handleOnChangeAvatar} />
+                    </Modal>
                 </div>
                 <div className={cx('edit-profile')}>
                     <Button type="primary" onClick={showModal}>

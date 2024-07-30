@@ -45,6 +45,24 @@
         }
     }
 
+    .upload-avatar {
+        position: absolute;
+        left: 27%;
+        bottom: -130px;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e4e6eb;
+        border-radius: 50%;
+    }
+
+    .upload-avatar:hover {
+        background-color: #d9d9d9;
+    }
+
     .edit-profile {
         padding: 0 15%;
         right: 10px;

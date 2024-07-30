@@ -5,7 +5,7 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(styles);
 
 const PostFrame = () => {
-    return <div>post</div>;
+    return <div className={cx('post')}>post</div>;
 };
 
 export default PostFrame;
