@@ -1,6 +1,6 @@
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Upload, message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './InputUpload.module.scss';
 
@@ -34,10 +34,6 @@ function InputUpload({ avatar, onChange, name }) {
             onChange(info.file.originFileObj);
         }
     };
-
-    useEffect(() => {
-        console.log(imageUrl);
-    }, [imageUrl]);
 
     const uploadButton = (
         <div>

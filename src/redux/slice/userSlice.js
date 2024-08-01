@@ -10,7 +10,7 @@ const initialState = {
     id: '',
     dateOfBirth: '',
     isAdmin: false,
-    avatar: null,
+    avatar: '',
 };
 
 export const userSlice = createSlice({
@@ -28,7 +28,7 @@ export const userSlice = createSlice({
                 gender = 'Male',
                 dateOfBirth = '',
                 isAdmin = false,
-                avatar = null,
+                avatar = '',
             } = action.payload;
             state.name = name;
             state.email = email;
@@ -52,7 +52,7 @@ export const userSlice = createSlice({
             state.id = '';
             state.dateOfBirth = '';
             state.isAdmin = false;
-            state.avatar = null;
+            state.avatar = '';
         },
     },
 });
