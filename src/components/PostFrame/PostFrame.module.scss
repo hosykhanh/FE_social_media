@@ -1,7 +1,143 @@
-.post {
-    height: 500px;
+.posts {
+    min-height: 400px;
+    max-height: 700px;
     background-color: #ffffff;
     margin: 15px 0px;
     border-radius: 8px;
     border: 1px solid #e5e5e5;
+
+    .posts-header {
+        padding: 15px 20px;
+        display: flex;
+
+        .name-time {
+            margin-left: 10px;
+
+            .name {
+                font-weight: 500;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+            .time {
+                color: #65676b;
+            }
+        }
+
+        .func {
+            display: flex;
+            margin-left: auto;
+
+            .func-icon {
+                width: 30px;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+
+            .func-icon:hover {
+                background-color: #f2f2f2;
+            }
+        }
+    }
+
+    .posts-container {
+        .content {
+            padding: 0px 20px 15px 20px;
+        }
+
+        .image {
+            display: flex;
+            justify-content: center;
+            max-width: 100%;
+            max-height: 500px;
+            overflow: hidden;
+            border-top: 1px solid #e5e5e5;
+            border-bottom: 1px solid #e5e5e5;
+        }
+    }
+
+    .posts-footer {
+        padding: 15px 20px 0px 20px;
+
+        .quantity {
+            display: flex;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e5e5;
+
+            .number-like {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+
+                .like {
+                    width: 18px;
+                    height: 18px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50%;
+                    border: 1px solid #0080ff;
+                }
+
+                .number {
+                    margin-left: 5px;
+                    font-size: 15px;
+                    color: #65676b;
+                }
+            }
+
+            .number-comment {
+                display: flex;
+                margin-left: auto;
+                color: #65676b;
+                cursor: pointer;
+
+                .comment {
+                    margin-left: 5px;
+                }
+            }
+
+            .number-share {
+                display: flex;
+                margin-left: 10px;
+                color: #65676b;
+                cursor: pointer;
+
+                .share {
+                    margin-left: 5px;
+                }
+            }
+
+            .number-comment:hover,
+            .number-share:hover {
+                text-decoration: underline;
+            }
+        }
+
+        .action {
+            display: flex;
+            font-weight: 500;
+            color: #65676b;
+            padding: 5px 0px;
+
+            .action-item {
+                cursor: pointer;
+                width: 30%;
+                display: flex;
+                gap: 5px;
+                justify-content: center;
+                align-items: center;
+                padding: 6px 5px;
+                border-radius: 5px;
+            }
+
+            .action-item:hover {
+                background-color: #f2f2f2;
+            }
+        }
+    }
 }

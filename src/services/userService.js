@@ -34,4 +34,9 @@ const updateAvatar = async (id, avatar) => {
     return res.data;
 };
 
-export { signUpUser, getUser, getAllUser, updateUser, updateAvatar, axiosJWT };
+const deleteUser = async ({ id }) => {
+    const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/users/${id}`);
+    return res.data;
+};
+
+export { signUpUser, getUser, getAllUser, updateUser, updateAvatar, deleteUser, axiosJWT };
