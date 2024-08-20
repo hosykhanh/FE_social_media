@@ -16,6 +16,8 @@ import { Avatar, Button, Col, Menu, Row } from 'antd';
 import PostFrame from '../../components/PostFrame/PostFrame';
 import SliderComponent from '../../components/Slider/Slider';
 import { slide } from '../../assets';
+import * as postsService from '../../services/postsService';
+import Loading from '../../components/Loading/Loading';
 import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
@@ -24,7 +26,19 @@ const HomePage = () => {
     const user = useSelector((state) => state.user);
     const [username, setUsername] = useState('');
     const [stateUser, setStateUser] = useState([]);
+    const [statePosts, setStatePosts] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const getAllPosts = async () => {
+            setIsLoading(true);
+            const data = await postsService.getAllPosts();
+            setStatePosts(data);
+            setIsLoading(false);
+        };
+        getAllPosts();
+    }, []);
 
     const HandleNavigate = (id) => {
         navigate(`/user/${id}`);
@@ -133,62 +147,82 @@ const HomePage = () => {
     }, []);
 
     return (
-        <div className={cx('wapper')}>
-            <Row>
-                <Col span={6}>
-                    <div className={cx('navbar-left')}>
-                        <Menu
-                            defaultSelectedKeys={['1']}
-                            defaultOpenKeys={['sub1']}
-                            mode="inline"
-                            theme="light"
-                            inlineCollapsed={collapsed}
-                            items={items}
-                            className={cx('menu')}
-                        />
-                    </div>
-                    <Button type="primary" onClick={toggleCollapsed} className={cx('collapsed-btn')}>
-                        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                    </Button>
-                </Col>
-                <Col span={12}>
-                    <div className={cx('content')}>
-                        <div className={cx('post-content')}>
-                            <PostFrame />
-                            <PostFrame />
+        <Loading isLoading={isLoading}>
+            <div className={cx('wapper')}>
+                <Row>
+                    <Col span={6}>
+                        <div className={cx('navbar-left')}>
+                            <Menu
+                                defaultSelectedKeys={['1']}
+                                defaultOpenKeys={['sub1']}
+                                mode="inline"
+                                theme="light"
+                                inlineCollapsed={collapsed}
+                                items={items}
+                                className={cx('menu')}
+                            />
                         </div>
-                    </div>
-                </Col>
-                <Col span={6}>
-                    <div className={cx('content-right')}>
-                        <div className={cx('slide-wrapper')}>
-                            <div className={cx('slider')}>
-                                <SliderComponent alt="slider" width="20%" images={slide} />
+                        <Button type="primary" onClick={toggleCollapsed} className={cx('collapsed-btn')}>
+                            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                        </Button>
+                    </Col>
+                    <Col span={12}>
+                        <div className={cx('content')}>
+                            <div className={cx('post-content')}>
+                                {statePosts
+                                    ?.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+                                    .map((post) => {
+                                        return (
+                                            <PostFrame
+                                                key={post?._id}
+                                                _id={post?._id}
+                                                image={post?.image}
+                                                description={post?.description}
+                                                favorites={post?.favorites}
+                                                author={post?.user}
+                                                createdAt={post?.createdAt}
+                                                updatedAt={post?.updatedAt}
+                                            />
+                                        );
+                                    })}
                             </div>
                         </div>
-                        <div className={cx('contact-user')}>
-                            <div className={cx('contact')}>Người liên hệ</div>
-                            {stateUser
-                                .filter((users) => users?._id !== user?.id)
-                                .map((users, index) => (
-                                    <div className={cx('user')} key={index} onClick={() => HandleNavigate(users?._id)}>
-                                        {users?.avatar ? (
-                                            <Avatar src={users?.avatar} size={40} />
-                                        ) : (
-                                            <Avatar
-                                                style={{ backgroundColor: '#87d068' }}
-                                                icon={<UserOutlined />}
-                                                size={40}
-                                            />
-                                        )}
-                                        <span className={cx('name')}>{users?.name}</span>
-                                    </div>
-                                ))}
+                    </Col>
+                    <Col span={6}>
+                        <div className={cx('content-right')}>
+                            <div className={cx('slide-wrapper')}>
+                                <div className={cx('slider')}>
+                                    <SliderComponent alt="slider" width="20%" images={slide} />
+                                </div>
+                            </div>
+                            <div className={cx('contact-user')}>
+                                <div className={cx('contact')}>Người liên hệ</div>
+                                {stateUser
+                                    .filter((users) => users?._id !== user?.id)
+                                    .map((users, index) => (
+                                        <div
+                                            className={cx('user')}
+                                            key={index}
+                                            onClick={() => HandleNavigate(users?._id)}
+                                        >
+                                            {users?.avatar ? (
+                                                <Avatar src={users?.avatar} size={40} />
+                                            ) : (
+                                                <Avatar
+                                                    style={{ backgroundColor: '#87d068' }}
+                                                    icon={<UserOutlined />}
+                                                    size={40}
+                                                />
+                                            )}
+                                            <span className={cx('name')}>{users?.name}</span>
+                                        </div>
+                                    ))}
+                            </div>
                         </div>
-                    </div>
-                </Col>
-            </Row>
-        </div>
+                    </Col>
+                </Row>
+            </div>
+        </Loading>
     );
 };
 

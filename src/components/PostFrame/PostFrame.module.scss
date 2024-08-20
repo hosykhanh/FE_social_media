@@ -19,6 +19,10 @@
                 cursor: pointer;
             }
 
+            .name:hover {
+                text-decoration: underline;
+            }
+
             .time {
                 color: #65676b;
             }
@@ -126,7 +130,7 @@
 
             .action-item {
                 cursor: pointer;
-                width: 30%;
+                width: calc((100% - 10px) / 3);
                 display: flex;
                 gap: 5px;
                 justify-content: center;
