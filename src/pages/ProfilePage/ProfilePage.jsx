@@ -19,11 +19,13 @@ import {
 } from '@ant-design/icons';
 import checkStatusResponse from '../../utils/checkStatusResponse';
 import * as userService from '../../services/userService';
+import * as postsService from '../../services/postsService';
 import { updateUser } from '../../redux/slice/userSlice';
 import convertISODateToLocalDate from '../../utils/convertISODateToLocalDate';
 import InputUpload from '../../components/InputUpload/InputUpload';
 import Loading from '../../components/Loading/Loading';
 import dayjs from 'dayjs';
+import PostFrame from '../../components/PostFrame/PostFrame';
 
 const cx = classNames.bind(styles);
 
@@ -42,6 +44,16 @@ const ProfilePage = () => {
     const [avatar, setAvatar] = useState(null);
     const [gender, setGender] = useState('Male');
     const [dateOfBirth, setDateOfBirth] = useState('');
+
+    const [statePosts, setStatePosts] = useState([]);
+
+    useEffect(() => {
+        const getPostsByUserId = async () => {
+            const data = await postsService.getPostsByUserId(id);
+            setStatePosts(data);
+        };
+        getPostsByUserId();
+    }, [id]);
 
     const mutation = useMutation({
         mutationFn: (data) => {
@@ -231,14 +243,14 @@ const ProfilePage = () => {
                             />
                         )}
 
-                        <div className={cx('username')}>{name}</div>
+                        <div className={cx('username')}>{user?.name}</div>
                     </div>
                 )}
             </div>
             <div className={cx('content')}>
                 <div className={cx('wrapper-content')}>
                     <Row>
-                        <Col span={8}>
+                        <Col span={9}>
                             <Loading isLoading={isLoading}>
                                 <div className={cx('information')}>
                                     <p>Thông tin chung</p>
@@ -334,8 +346,29 @@ const ProfilePage = () => {
                                 </div>
                             </Loading>
                         </Col>
-                        <Col span={16}>
-                            <div className={cx('posts')}>post</div>
+                        <Col span={15}>
+                            <div className={cx('posts')}>
+                                {statePosts.length ? (
+                                    statePosts
+                                        ?.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+                                        .map((post) => {
+                                            return (
+                                                <PostFrame
+                                                    key={post?._id}
+                                                    _id={post?._id}
+                                                    image={post?.image}
+                                                    description={post?.description}
+                                                    favorites={post?.favorites}
+                                                    author={post?.user}
+                                                    createdAt={post?.createdAt}
+                                                    updatedAt={post?.updatedAt}
+                                                />
+                                            );
+                                        })
+                                ) : (
+                                    <div className={cx('no-posts')}>Chưa có bài viết nào</div>
+                                )}
+                            </div>
                         </Col>
                     </Row>
                 </div>

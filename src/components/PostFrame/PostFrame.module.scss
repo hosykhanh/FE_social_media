@@ -2,7 +2,7 @@
     min-height: 400px;
     max-height: 700px;
     background-color: #ffffff;
-    margin: 15px 0px;
+    margin-bottom: 15px;
     border-radius: 8px;
     border: 1px solid #e5e5e5;
 
@@ -91,6 +91,10 @@
                     margin-left: 5px;
                     font-size: 15px;
                     color: #65676b;
+                }
+
+                .number:hover {
+                    text-decoration: underline;
                 }
             }
 

@@ -16,6 +16,11 @@ const getAllPosts = async () => {
     return res.data;
 };
 
+const getPostsByUserId = async (userId) => {
+    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/posts/${userId}/post`);
+    return res.data;
+};
+
 const updatePosts = async (id, data) => {
     const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/posts/${id}`, data);
     return res.data;
@@ -26,4 +31,4 @@ const deletePosts = async ({ id }) => {
     return res.data;
 };
 
-export { createPosts, getPosts, getAllPosts, updatePosts, deletePosts, axiosJWT };
+export { createPosts, getPosts, getAllPosts, updatePosts, deletePosts, getPostsByUserId, axiosJWT };
