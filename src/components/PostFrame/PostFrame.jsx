@@ -142,9 +142,19 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
                 </div>
                 <div className={cx('posts-container')}>
                     <div className={cx('content')}>{description}</div>
-                    <div className={cx('image')}>
-                        <Image style={{ maxHeight: '600px', objectFit: 'cover' }} src={image} />
-                    </div>
+                    {image ? (
+                        <div className={cx('image')}>
+                            {image.endsWith('mp4') || image.endsWith('mov') || image.endsWith('mkv') ? (
+                                <video controls style={{ maxWidth: '100%', maxHeight: '600px' }}>
+                                    <source src={image} type="video/mp4" />
+                                </video>
+                            ) : (
+                                <Image style={{ maxHeight: '600px', objectFit: 'cover' }} src={image} />
+                            )}
+                        </div>
+                    ) : (
+                        <></>
+                    )}
                 </div>
                 <div className={cx('posts-footer')}>
                     <div className={cx('quantity')}>

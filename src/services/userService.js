@@ -16,6 +16,11 @@ const getAllUser = async () => {
     return res.data;
 };
 
+const searchUsers = async (id, search) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/users/${id}/suggestions?search=${search}`);
+    return res.data;
+};
+
 const updateUser = async (id, data) => {
     const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/users/${id}`, data);
     return res.data;
@@ -39,4 +44,4 @@ const deleteUser = async (id) => {
     return res.data;
 };
 
-export { signUpUser, getUser, getAllUser, updateUser, updateAvatar, deleteUser, axiosJWT };
+export { signUpUser, getUser, getAllUser, updateUser, updateAvatar, deleteUser, searchUsers, axiosJWT };

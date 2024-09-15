@@ -91,6 +91,19 @@
     }
 }
 
+.user {
+    cursor: pointer;
+    padding: 5px 8px;
+    align-items: center;
+    border-radius: 8px;
+
+    .name {
+        margin-left: 10px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+}
+
 .logout {
     cursor: pointer;
     padding: 8px;

@@ -7,6 +7,7 @@ import images from '../../../assets';
 import Search from 'antd/es/transfer/search';
 import { useDispatch, useSelector } from 'react-redux';
 import * as authService from '../../../services/authService';
+import * as userService from '../../../services/userService';
 import { resetUser } from '../../../redux/slice/userSlice';
 import { LogoutOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
 import Loading from '../../../components/Loading/Loading';
@@ -17,6 +18,8 @@ const Header = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState('');
+    const [searchValue, setSearchValue] = useState('');
+    const [searchData, setSearchData] = useState();
 
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
@@ -25,8 +28,8 @@ const Header = () => {
         navigate('/');
     };
 
-    const handleNavigateProfile = () => {
-        navigate(`/user/${user?.id}`);
+    const handleNavigateProfile = (id) => {
+        navigate(`/user/${id}`);
     };
 
     useEffect(() => {
@@ -44,11 +47,27 @@ const Header = () => {
         setLoading(false);
     };
 
+    const onSearch = async (e) => {
+        setSearchValue(e.target.value);
+    };
+
+    useEffect(() => {
+        const searchUsers = async () => {
+            if (searchValue.trim()) {
+                const res = await userService.searchUsers(user.id, searchValue);
+                setSearchData(res);
+            } else {
+                setSearchData([]);
+            }
+        };
+        searchUsers();
+    }, [user.id, searchValue]);
+
     const content = () => {
         return (
             <div>
                 <div className={cx('wrapper-avatar-name')}>
-                    <div className={cx('avatar-name')} onClick={handleNavigateProfile}>
+                    <div className={cx('avatar-name')} onClick={() => handleNavigateProfile(user?.id)}>
                         {user?.avatar ? (
                             <Avatar src={user?.avatar} size={40} />
                         ) : (
@@ -56,13 +75,34 @@ const Header = () => {
                         )}
                         <span className={cx('name')}>{username}</span>
                     </div>
-                    <div className={cx('profile')} onClick={handleNavigateProfile}>
+                    <div className={cx('profile')} onClick={() => handleNavigateProfile(user?.id)}>
                         Xem trang cá nhân
                     </div>
                 </div>
                 <div className={cx('logout')} onClick={handleLogout}>
                     <LogoutOutlined style={{ fontSize: 30 }} /> <div className={cx('logout-span')}>Đăng xuất</div>
                 </div>
+            </div>
+        );
+    };
+
+    const contentSearch = () => {
+        return (
+            <div style={{ width: '300px' }}>
+                {searchData?.length > 0 ? (
+                    searchData.map((users, index) => (
+                        <div className={cx('user')} key={index} onClick={() => handleNavigateProfile(users._id)}>
+                            {users?.avatar ? (
+                                <Avatar src={users?.avatar} size={40} />
+                            ) : (
+                                <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} size={40} />
+                            )}
+                            <span className={cx('name')}>{users?.name}</span>
+                        </div>
+                    ))
+                ) : (
+                    <div>Hãy nhập từ khóa để tìm kiếm</div> // Hiển thị nếu không có kết quả tìm kiếm
+                )}
             </div>
         );
     };
@@ -78,14 +118,19 @@ const Header = () => {
                         </div>
                     </Col>
                     <Col span={12}>
-                        <Search
-                            className={cx('search-input')}
-                            placeholder="Tìm kiếm..."
-                            allowClear
-                            enterButton="Tìm kiếm"
-                            size="large"
-                            enter="true"
-                        />
+                        <Popover content={contentSearch()} trigger="click" placement="bottomLeft">
+                            <div onClick={(e) => e.stopPropagation()}>
+                                <Search
+                                    className={cx('search-input')}
+                                    placeholder="Tìm kiếm..."
+                                    allowClear
+                                    enterButton="Tìm kiếm"
+                                    size="large"
+                                    onChange={onSearch}
+                                    value={searchValue}
+                                />
+                            </div>
+                        </Popover>
                     </Col>
                     <Col span={8}>
                         <div className={cx('wrapper-account')}>
