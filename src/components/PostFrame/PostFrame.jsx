@@ -7,6 +7,7 @@ import {
     CommentOutlined,
     EllipsisOutlined,
     LikeOutlined,
+    SendOutlined,
     ShareAltOutlined,
     UserOutlined,
 } from '@ant-design/icons';
@@ -21,6 +22,7 @@ const cx = classNames.bind(styles);
 const PostFrame = ({ _id, image, description, favorites, author, createdAt, updatedAt }) => {
     const user = useSelector((state) => state.user);
     const [stateComment, setStateComment] = useState([]);
+    const [contentComment, setContentComment] = useState('');
     const [stateLike, setStateLike] = useState([]);
     const [createdLike, setCreatedLike] = useState();
     const [likeColor, setLikeColor] = useState(false);
@@ -63,29 +65,32 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
         navigate(`/user/${id}`);
     };
 
-    const timeUpdate = new Date(updatedAt);
+    function timeAgo(updatedAt) {
+        const timeUpdate = new Date(updatedAt);
+        const now = new Date();
+        const diffInMilliseconds = now - timeUpdate;
 
-    const now = new Date();
-    const diffInMilliseconds = now - timeUpdate;
+        const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60);
+        const diffInHours = Math.floor(diffInMilliseconds / 1000 / 60 / 60);
+        const diffInDays = Math.floor(diffInMilliseconds / 1000 / 60 / 60 / 24);
 
-    const diffInMinutes = Math.floor(diffInMilliseconds / 1000 / 60);
-    const diffInHours = Math.floor(diffInMilliseconds / 1000 / 60 / 60);
-    const diffInDays = Math.floor(diffInMilliseconds / 1000 / 60 / 60 / 24);
+        let timeAgo;
 
-    let timeAgo;
+        if (diffInDays > 7) {
+            timeAgo = timeUpdate.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
+        } else if (diffInDays >= 1) {
+            timeAgo = `${diffInDays} ngày trước`;
+        } else if (diffInHours >= 1) {
+            timeAgo = `${diffInHours} giờ trước`;
+        } else {
+            timeAgo = `${diffInMinutes} phút trước`;
+        }
 
-    if (diffInDays > 7) {
-        timeAgo = timeUpdate.toLocaleDateString('vi-VN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        }); // Hiển thị ngày cụ thể nếu quá 7 ngày
-    } else if (diffInDays >= 1) {
-        timeAgo = `${diffInDays} ngày trước`;
-    } else if (diffInHours >= 1) {
-        timeAgo = `${diffInHours} giờ trước`;
-    } else {
-        timeAgo = `${diffInMinutes} phút trước`;
+        return timeAgo;
     }
 
     const OnClickLike = async () => {
@@ -104,12 +109,24 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
         }
     };
 
-    const showModalComment = () => {
-        setIsModalOpenComment(true);
+    const onClickSendComment = async () => {
+        if (contentComment.trim() !== '') {
+            const data = { content: contentComment, posts: _id, user: user.id };
+            const res = await commentService.createComment(data);
+            setStateComment((prevComments) => [res, ...prevComments]);
+            setContentComment('');
+            return res;
+        } else {
+            return null;
+        }
     };
 
-    const handleOkComment = () => {
-        setIsModalOpenComment(false);
+    const handleOnChangeContentComment = (e) => {
+        setContentComment(e.target.value);
+    };
+
+    const showModalComment = () => {
+        setIsModalOpenComment(true);
     };
 
     const handleCancelComment = () => {
@@ -129,7 +146,7 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
                         <span className={cx('name')} onClick={() => HandleNavigate(author?._id)}>
                             {author?.name}
                         </span>
-                        <div className={cx('time')}>{timeAgo}</div>
+                        <div className={cx('time')}>{timeAgo(updatedAt)}</div>
                     </div>
                     <div className={cx('func')}>
                         <div className={cx('func-icon')}>
@@ -188,27 +205,58 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
                             <span>Bình luận</span>
                         </div>
                         <Modal
-                            title={
-                                <div
-                                    style={{
-                                        textAlign: 'center',
-                                        fontWeight: 'bold',
-                                        fontSize: '18px',
-                                    }}
-                                >
-                                    Bài viết của {author?.name}
+                            title={<div className={cx('title-comment')}>Bình luận bài viết của {author?.name}</div>}
+                            open={isModalOpenComment}
+                            onCancel={handleCancelComment}
+                            width="45%"
+                            style={{ top: 50 }}
+                            footer={
+                                <div className={cx('footer-comment')}>
+                                    <Avatar src={user?.avatar} size={40} style={{ cursor: 'pointer' }} />
+                                    <div className={cx('content-send')}>
+                                        <textarea
+                                            placeholder="Viết bình luận ..."
+                                            value={contentComment}
+                                            onChange={handleOnChangeContentComment}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' && !e.shiftKey) {
+                                                    e.preventDefault();
+                                                    onClickSendComment();
+                                                }
+                                            }}
+                                        ></textarea>
+                                        <button className={cx('send-button')} onClick={onClickSendComment}>
+                                            <SendOutlined />
+                                        </button>
+                                    </div>
                                 </div>
                             }
-                            open={isModalOpenComment}
-                            onOk={handleOkComment}
-                            onCancel={handleCancelComment}
-                            footer={null}
-                            width="45%"
                         >
                             <Loading isLoading={isLoading}>
-                                <p>Some contents...</p>
-                                <p>Some contents...</p>
-                                <p>Some contents...</p>
+                                <div className={cx('wrapper-comment')}>
+                                    {stateComment.length ? (
+                                        stateComment.map((users, index) => (
+                                            <div key={index} className={cx('container-comment')}>
+                                                <Avatar
+                                                    src={users?.user?.avatar}
+                                                    size={40}
+                                                    style={{ cursor: 'pointer' }}
+                                                />
+                                                <div className={cx('information-comment')}>
+                                                    <div className={cx('user-comment')}>
+                                                        <span className={cx('name-user')}>{users?.user?.name}</span>
+                                                        <div className={cx('content-comment')}>{users?.content}</div>
+                                                    </div>
+                                                    <div className={cx('time-comment')}>
+                                                        {timeAgo(users?.updatedAt)}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className={cx('none-comment')}>Bài viết này chưa có bình luận nào.</div>
+                                    )}
+                                </div>
                             </Loading>
                         </Modal>
                         <div className={cx('action-item')}>

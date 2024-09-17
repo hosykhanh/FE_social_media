@@ -24,6 +24,8 @@
 
             .time {
                 color: #65676b;
+                font-size: 13px;
+                font-weight: 450;
             }
         }
 
@@ -147,4 +149,102 @@
             }
         }
     }
+}
+
+.title-comment {
+    border-bottom: 1px solid #e5e5e5;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    padding-bottom: 15px;
+}
+
+.wrapper-comment {
+    overflow-y: auto;
+    max-height: 450px;
+}
+
+.container-comment {
+    display: flex;
+    margin-top: 15px;
+
+    .information-comment {
+        margin-left: 7px;
+
+        .user-comment {
+            background-color: #f2f2f2;
+            padding: 5px 15px;
+            border-radius: 20px;
+
+            .name-user {
+                font-size: 13.5px;
+                font-weight: 650;
+                cursor: pointer;
+            }
+
+            .content-comment {
+                font-size: 14px;
+            }
+        }
+
+        .time-comment {
+            padding: 0px 10px;
+            color: #65676b;
+            font-size: 13px;
+            font-weight: 450;
+        }
+    }
+}
+
+.footer-comment {
+    display: flex;
+    padding-top: 15px;
+    border-top: 1px solid #e5e5e5;
+    margin-top: 0 !important;
+
+    .content-send {
+        display: flex;
+        align-items: center;
+        border: 1px solid #e6e8eb;
+        border-radius: 10px;
+        padding: 10px;
+        background-color: #f2f2f2;
+        width: 100%;
+        max-width: 600px;
+        margin-left: 5px;
+    }
+
+    textarea {
+        width: 100%;
+        border: none;
+        resize: none;
+        outline: none;
+        background-color: #f2f2f2;
+        font-size: 14px;
+        padding-bottom: 20px;
+        border-radius: 5px;
+    }
+
+    .send-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-left: 10px;
+        color: #b0b0b0;
+    }
+
+    .send-button:hover {
+        color: #1890ff;
+    }
+
+    .send-button .anticon {
+        font-size: 20px;
+    }
+}
+
+.none-comment {
+    display: flex;
+    justify-content: center;
+    height: 100px;
+    align-items: center;
 }
