@@ -44,4 +44,10 @@ const deleteUser = async (id) => {
     return res.data;
 };
 
-export { signUpUser, getUser, getAllUser, updateUser, updateAvatar, deleteUser, searchUsers, axiosJWT };
+const deleteManyUser = async (data) => {
+    console.log(data);
+    const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/users/delete-many`, { data });
+    return res.data;
+};
+
+export { signUpUser, getUser, getAllUser, updateUser, updateAvatar, deleteUser, searchUsers, deleteManyUser, axiosJWT };

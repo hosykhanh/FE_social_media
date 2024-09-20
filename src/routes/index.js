@@ -1,5 +1,7 @@
 import DefaultLayout from '../layouts/DefaultLayout/DefaultLayout';
 import FullLayout from '../layouts/FullLayout/FullLayout';
+import AdminPage from '../pages/AdminPage/AdminPage';
+// import ChatPage from '../pages/ChatPage/ChatPage';
 import HomePage from '../pages/HomePage/HomePage';
 import PostPage from '../pages/PostPage/PostPage';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
@@ -31,5 +33,16 @@ export const routes = [
         path: '/post',
         page: PostPage,
         layout: FullLayout,
+    },
+    // {
+    //     path: '/chat',
+    //     page: ChatPage,
+    //     layout: DefaultLayout,
+    // },
+    {
+        path: '/system/admin',
+        page: AdminPage,
+        layout: FullLayout,
+        isPrivate: true,
     },
 ];

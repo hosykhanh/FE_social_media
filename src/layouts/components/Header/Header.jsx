@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as authService from '../../../services/authService';
 import * as userService from '../../../services/userService';
 import { resetUser } from '../../../redux/slice/userSlice';
-import { LogoutOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, MessageOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';
 import Loading from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
@@ -30,6 +30,10 @@ const Header = () => {
 
     const handleNavigateProfile = (id) => {
         navigate(`/user/${id}`);
+    };
+
+    const handleNavigateSystemAdmin = () => {
+        navigate('/system/admin');
     };
 
     useEffect(() => {
@@ -79,8 +83,17 @@ const Header = () => {
                         Xem trang cá nhân
                     </div>
                 </div>
+                {user?.isAdmin === true ? (
+                    <div className={cx('logout')} onClick={handleNavigateSystemAdmin}>
+                        <UnorderedListOutlined style={{ fontSize: 30 }} />
+                        <div>Quản lý hệ thống</div>
+                    </div>
+                ) : (
+                    <></>
+                )}
                 <div className={cx('logout')} onClick={handleLogout}>
-                    <LogoutOutlined style={{ fontSize: 30 }} /> <div className={cx('logout-span')}>Đăng xuất</div>
+                    <LogoutOutlined style={{ fontSize: 30 }} />
+                    <div className={cx('logout-span')}>Đăng xuất</div>
                 </div>
             </div>
         );

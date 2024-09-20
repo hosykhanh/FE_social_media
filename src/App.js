@@ -53,7 +53,7 @@ function App() {
                             const Page = route.page;
                             let Layout = DefaultLayout;
                             const isPrivate = route?.isPrivate;
-                            const isAuth = user?.isAdmin === role.ROLE_USER;
+                            const isAuth = user?.isAdmin === role.ROLE_ADMIN;
 
                             if (route.layout) {
                                 Layout = route.layout;

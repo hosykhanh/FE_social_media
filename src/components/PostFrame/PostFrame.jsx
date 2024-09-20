@@ -86,8 +86,10 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
             timeAgo = `${diffInDays} ngày trước`;
         } else if (diffInHours >= 1) {
             timeAgo = `${diffInHours} giờ trước`;
-        } else {
+        } else if (diffInMinutes >= 1) {
             timeAgo = `${diffInMinutes} phút trước`;
+        } else {
+            timeAgo = 'Vừa xong';
         }
 
         return timeAgo;
@@ -241,10 +243,16 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
                                                     src={users?.user?.avatar}
                                                     size={40}
                                                     style={{ cursor: 'pointer' }}
+                                                    onClick={() => HandleNavigate(users?.user?._id)}
                                                 />
                                                 <div className={cx('information-comment')}>
                                                     <div className={cx('user-comment')}>
-                                                        <span className={cx('name-user')}>{users?.user?.name}</span>
+                                                        <span
+                                                            className={cx('name-user')}
+                                                            onClick={() => HandleNavigate(users?.user?._id)}
+                                                        >
+                                                            {users?.user?.name}
+                                                        </span>
                                                         <div className={cx('content-comment')}>{users?.content}</div>
                                                     </div>
                                                     <div className={cx('time-comment')}>
