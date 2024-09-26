@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from 'react-query';
 import Highlighter from 'react-highlight-words';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button, Input, Space } from 'antd';
 
 import styles from './TableUser.module.scss';
@@ -185,10 +185,6 @@ function TableUser() {
         mutationFn: (data) => userService.deleteManyUser(data),
     });
     // -----
-
-    // useEffect(() => {
-    //     console.log(dataUser);
-    // }, [dataUser]);
 
     return (
         <div className={cx('wrapper')}>

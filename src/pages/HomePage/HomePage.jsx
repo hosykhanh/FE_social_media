@@ -6,17 +6,18 @@ import * as userService from '../../services/userService';
 import {
     AppstoreOutlined,
     ContainerOutlined,
-    DesktopOutlined,
     MailOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
+    PlusCircleOutlined,
     UserOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Col, Menu, Row } from 'antd';
+import { Avatar, Button, Col, Menu, Modal, Row } from 'antd';
 import PostFrame from '../../components/PostFrame/PostFrame';
 import SliderComponent from '../../components/Slider/Slider';
 import { slide } from '../../assets';
 import * as postsService from '../../services/postsService';
+import InputUploadPost from '../../components/InputUploadPost/InputUploadPost';
 import Loading from '../../components/Loading/Loading';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,6 +28,9 @@ const HomePage = () => {
     const [username, setUsername] = useState('');
     const [stateUser, setStateUser] = useState([]);
     const [statePosts, setStatePosts] = useState([]);
+    const [image, setImage] = useState(null);
+    const [description, setDescription] = useState('');
+    const [isModalOpenPost, setIsModalOpenPost] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -67,8 +71,13 @@ const HomePage = () => {
         },
         {
             key: '2',
-            icon: <DesktopOutlined />,
-            label: 'Option 2',
+            icon: (
+                <PlusCircleOutlined
+                    style={{ fontSize: '30px', backgroundColor: '#0080ff', borderRadius: '50%', color: '#ffffff' }}
+                />
+            ),
+            label: 'Đăng bài',
+            onClick: () => showModalPost(),
         },
         {
             key: '3',
@@ -146,6 +155,32 @@ const HomePage = () => {
         HandleGetUser();
     }, []);
 
+    const onClickSendPost = async () => {
+        setIsLoading(true);
+        const data = { image: image, description: description, user: user.id };
+        const res = await postsService.createPosts(data);
+        setStatePosts((prevComments) => [res, ...prevComments]);
+        setIsModalOpenPost(false);
+        setIsLoading(false);
+        return res;
+    };
+
+    const handleOnChangeImage = (file) => {
+        setImage(file);
+    };
+
+    const handleOnChangeDescription = (e) => {
+        setDescription(e.target.value);
+    };
+
+    const showModalPost = () => {
+        setIsModalOpenPost(true);
+    };
+
+    const handleCancelPost = () => {
+        setIsModalOpenPost(false);
+    };
+
     return (
         <Loading isLoading={isLoading}>
             <div className={cx('wapper')}>
@@ -165,6 +200,33 @@ const HomePage = () => {
                         <Button type="primary" onClick={toggleCollapsed} className={cx('collapsed-btn')}>
                             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                         </Button>
+                        <Modal
+                            title={<div className={cx('title-post')}>Tạo bài viết</div>}
+                            open={isModalOpenPost}
+                            onCancel={handleCancelPost}
+                            width="35%"
+                            footer={
+                                <div>
+                                    <Button type="primary" className={cx('button-post')} onClick={onClickSendPost}>
+                                        Đăng
+                                    </Button>
+                                </div>
+                            }
+                        >
+                            <div className={cx('content-post')}>
+                                <div className={cx('user')}>
+                                    <Avatar src={user?.avatar} size={40} onClick={handleNavigateProfile} />
+                                    <span className={cx('name')}>{user?.name}</span>
+                                </div>
+                                <textarea
+                                    className={cx('description')}
+                                    placeholder="Bạn đang nghĩ gì thế?"
+                                    value={description}
+                                    onChange={handleOnChangeDescription}
+                                ></textarea>
+                                <InputUploadPost type="file" onChange={handleOnChangeImage}></InputUploadPost>
+                            </div>
+                        </Modal>
                     </Col>
                     <Col span={12}>
                         <div className={cx('content')}>

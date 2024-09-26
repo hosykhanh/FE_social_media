@@ -20,6 +20,33 @@
     overflow-y: auto;
 }
 
+.title-post {
+    border-bottom: 1px solid #e5e5e5;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    padding-bottom: 15px;
+}
+
+.content-post {
+    .description {
+        padding: 10px 0px;
+    }
+
+    textarea {
+        width: 100%;
+        border: none;
+        resize: none;
+        outline: none;
+        overflow: 'hidden';
+        font-size: 16px;
+    }
+}
+
+.button-post {
+    width: 100%;
+}
+
 .collapsed-btn {
     position: fixed;
     bottom: 10px;
@@ -69,20 +96,20 @@
         border-top: 1px solid #adadad;
     }
 
-    .user {
-        cursor: pointer;
-        padding: 5px 8px;
-        align-items: center;
-        border-radius: 8px;
-
-        .name {
-            margin-left: 10px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-    }
-
     .user:hover {
         background-color: #e9e9e9;
+    }
+}
+
+.user {
+    cursor: pointer;
+    padding: 5px 8px;
+    align-items: center;
+    border-radius: 8px;
+
+    .name {
+        margin-left: 10px;
+        font-size: 14px;
+        font-weight: 500;
     }
 }

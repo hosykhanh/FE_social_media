@@ -1,12 +1,12 @@
 import { Menu } from 'antd';
 import { useState } from 'react';
 import { getItem } from '../../utils';
-import { AppstoreOutlined, UserOutlined, QuestionCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import classNames from 'classnames/bind';
 
 import styles from './AdminPage.module.scss';
 import TableUser from '../../components/TableUser/TableUser';
-import { useQuery } from 'react-query';
+// import { useQuery } from 'react-query';
 // import TableRequest from '../../components/TableRequest/TableRequest';
 // import TableReport from '../../components/TableReport/TableReport';
 

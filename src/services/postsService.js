@@ -2,7 +2,19 @@ import axios from 'axios';
 import axiosJWT from './axiosService';
 
 const createPosts = async (data) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/posts`, data);
+    const formData = new FormData();
+    for (const key in data) {
+        if (key === 'image') {
+            formData.append(key, data[key]);
+        } else {
+            formData.append(key, data[key]);
+        }
+    }
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/posts`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
     return res.data;
 };
 
