@@ -28,6 +28,10 @@ const Header = () => {
         navigate('/');
     };
 
+    const handleNavigateChat = () => {
+        navigate('/chat');
+    };
+
     const handleNavigateProfile = (id) => {
         navigate(`/user/${id}`);
     };
@@ -114,7 +118,7 @@ const Header = () => {
                         </div>
                     ))
                 ) : (
-                    <div>Hãy nhập từ khóa để tìm kiếm</div> // Hiển thị nếu không có kết quả tìm kiếm
+                    <div>Hãy nhập từ khóa để tìm kiếm</div>
                 )}
             </div>
         );
@@ -148,7 +152,10 @@ const Header = () => {
                     <Col span={8}>
                         <div className={cx('wrapper-account')}>
                             <div className={cx('message')}>
-                                <MessageOutlined style={{ fontSize: 20, color: '#000000', cursor: 'pointer' }} />
+                                <MessageOutlined
+                                    style={{ fontSize: 20, color: '#000000', cursor: 'pointer' }}
+                                    onClick={handleNavigateChat}
+                                />
                             </div>
                             <Loading isLoading={loading}>
                                 <div>
