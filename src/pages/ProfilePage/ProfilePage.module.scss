@@ -10,6 +10,7 @@
     .image {
         max-height: 300px;
         object-fit: cover;
+        border-radius: 0px 0px 5px 5px;
     }
 
     .button-image {
@@ -72,10 +73,22 @@
         button {
             background-color: #e4e6eb;
             color: #000000;
+            font-weight: 500;
         }
         button:hover {
             background-color: #d9d9d9 !important;
             color: #000000 !important;
+        }
+    }
+
+    .chat {
+        padding: 0 15%;
+        right: 50px;
+        bottom: -100px;
+        position: absolute;
+
+        button {
+            font-weight: 500;
         }
     }
 }

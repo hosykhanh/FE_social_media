@@ -72,7 +72,11 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
 
             // Send message to socket server
             const receiverId = data?.participants.find((id) => id !== currentUserId);
-            setSendMessage({ ...payload, receiverId });
+            setSendMessage({ ...payload, receiverId, createdAt: result.createdAt });
+
+            const dataChat = { lastMessageSentAt: result.createdAt };
+            const res = chatService.updateChatRoom(data._id, dataChat);
+            return res;
         } catch (error) {}
     };
 

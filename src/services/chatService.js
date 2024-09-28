@@ -20,6 +20,11 @@ export const getChatRoomsByUserId = async (id) => {
     return res?.data;
 };
 
+export const updateChatRoom = async (id, data) => {
+    const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/chatRooms/${id}`, data);
+    return res.data;
+};
+
 export const getMessages = async (id) => {
     const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/messages/${id}`);
     return res?.data;

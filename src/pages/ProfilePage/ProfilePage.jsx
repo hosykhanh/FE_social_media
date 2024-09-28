@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import classNames from 'classnames/bind';
 import styles from './ProfilePage.module.scss';
@@ -12,6 +12,7 @@ import {
     EditOutlined,
     EnvironmentOutlined,
     MailOutlined,
+    MessageOutlined,
     PhoneOutlined,
     ScheduleOutlined,
     UserOutlined,
@@ -20,6 +21,7 @@ import {
 import checkStatusResponse from '../../utils/checkStatusResponse';
 import * as userService from '../../services/userService';
 import * as postsService from '../../services/postsService';
+import * as chatService from '../../services/chatService';
 import { updateUser } from '../../redux/slice/userSlice';
 import convertISODateToLocalDate from '../../utils/convertISODateToLocalDate';
 import InputUpload from '../../components/InputUpload/InputUpload';
@@ -33,7 +35,7 @@ const ProfilePage = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
     const users = useSelector((state) => state.user);
-    const [user, setUser] = useState([]);
+    const [otherUser, setOtherUser] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalOpenAvatar, setIsModalOpenAvatar] = useState(false);
     const [isModalOpenDetail, setIsModalOpenDetail] = useState(false);
@@ -46,6 +48,7 @@ const ProfilePage = () => {
     const [dateOfBirth, setDateOfBirth] = useState('');
 
     const [statePosts, setStatePosts] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getPostsByUserId = async () => {
@@ -80,11 +83,11 @@ const ProfilePage = () => {
     const { data, isLoading, isSuccess, isError } = mutation;
 
     useEffect(() => {
-        const HandleGetUser = async () => {
+        const HandleGetOtherUser = async () => {
             const res = await userService.getUser(id);
-            setUser(res);
+            setOtherUser(res);
         };
-        HandleGetUser();
+        HandleGetOtherUser();
     }, [id]);
 
     useEffect(() => {
@@ -108,6 +111,13 @@ const ProfilePage = () => {
             setDateOfBirth(users.dateOfBirth);
         }
     }, [users]);
+
+    const onClickButtonChat = async () => {
+        const data = { userId: users.id, otherUserId: otherUser._id };
+        const res = await chatService.createPrivateChatRoom(data);
+        navigate('/chat');
+        return res;
+    };
 
     const handleOnChangeAvatar = (file) => {
         setAvatar(file);
@@ -181,7 +191,7 @@ const ProfilePage = () => {
         <div className={cx('wrapper')}>
             <div className={cx('wrapper-image')}>
                 <Image width="100%" src={images.anhnen} alt="anhnen" className={cx('image')} />
-                {users.id === user._id ? (
+                {users.id === otherUser._id ? (
                     <div>
                         <div className={cx('button-image')}>
                             <Button>
@@ -232,18 +242,26 @@ const ProfilePage = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className={cx('wrapper-avatar')}>
-                        {user?.avatar ? (
-                            <Image src={user?.avatar} className={cx('avatar')} />
-                        ) : (
-                            <Avatar
-                                style={{ backgroundColor: '#87d068', border: '5px solid #ffffff' }}
-                                icon={<UserOutlined />}
-                                size={175}
-                            />
-                        )}
+                    <div>
+                        <div className={cx('wrapper-avatar')}>
+                            {otherUser?.avatar ? (
+                                <Image src={otherUser?.avatar} className={cx('avatar')} />
+                            ) : (
+                                <Avatar
+                                    style={{ backgroundColor: '#87d068', border: '5px solid #ffffff' }}
+                                    icon={<UserOutlined />}
+                                    size={175}
+                                />
+                            )}
 
-                        <div className={cx('username')}>{user?.name}</div>
+                            <div className={cx('username')}>{otherUser?.name}</div>
+                        </div>
+                        <div className={cx('chat')}>
+                            <Button type="primary" onClick={onClickButtonChat}>
+                                <MessageOutlined />
+                                Nhắn tin
+                            </Button>
+                        </div>
                     </div>
                 )}
             </div>
@@ -259,36 +277,36 @@ const ProfilePage = () => {
                                             <ScheduleOutlined /> Ngày sinh
                                         </label>
                                         <div>
-                                            {users.id === user._id
+                                            {users.id === otherUser._id
                                                 ? convertISODateToLocalDate(dateOfBirth || '2000-01-01')
-                                                : convertISODateToLocalDate(user.dateOfBirth || '2000-01-01')}
+                                                : convertISODateToLocalDate(otherUser.dateOfBirth || '2000-01-01')}
                                         </div>
                                     </div>
                                     <div className={cx('field')}>
                                         <label htmlFor="Giới tính">
                                             <UserSwitchOutlined /> Giới tính
                                         </label>
-                                        <div>{users.id === user._id ? gender : user.gender}</div>
+                                        <div>{users.id === otherUser._id ? gender : otherUser.gender}</div>
                                     </div>
                                     <div className={cx('field')}>
                                         <label htmlFor="Số điện thoại">
                                             <PhoneOutlined /> Số điện thoại
                                         </label>
-                                        <div>{users.id === user._id ? phone : user.phone}</div>
+                                        <div>{users.id === otherUser._id ? phone : otherUser.phone}</div>
                                     </div>
                                     <div className={cx('field')}>
                                         <label htmlFor="Email">
                                             <MailOutlined /> Email
                                         </label>
-                                        <div>{users.id === user._id ? email : user.email}</div>
+                                        <div>{users.id === otherUser._id ? email : otherUser.email}</div>
                                     </div>
                                     <div className={cx('field')}>
                                         <label htmlFor="Địa chỉ">
                                             <EnvironmentOutlined /> Địa chỉ
                                         </label>
-                                        <div>{users.id === user._id ? address : user.address}</div>
+                                        <div>{users.id === otherUser._id ? address : otherUser.address}</div>
                                     </div>
-                                    {users.id === user._id ? (
+                                    {users.id === otherUser._id ? (
                                         <div>
                                             <Button type="primary" onClick={showModalDetail}>
                                                 <EditOutlined /> Chỉnh sửa chi tiết

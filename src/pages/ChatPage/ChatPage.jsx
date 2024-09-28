@@ -40,17 +40,55 @@ function ChatPage() {
     useEffect(() => {
         if (sendMessage) {
             socket.current.emit('send-message', sendMessage);
+            const updatedChats = data.map((chat) => {
+                if (chat._id === sendMessage.chatRoom) {
+                    return {
+                        ...chat,
+                        lastMessageSentAt: sendMessage.createdAt, // Cập nhật thời gian tin nhắn gần nhất
+                    };
+                }
+                return chat;
+            });
+
+            const sortedChats = updatedChats.sort(
+                (a, b) => new Date(b.lastMessageSentAt) - new Date(a.lastMessageSentAt),
+            );
+            // Chỉ cập nhật nếu có sự thay đổi
+            if (JSON.stringify(sortedChats) !== JSON.stringify(data)) {
+                setDataChat(sortedChats);
+            }
         }
-    }, [sendMessage]);
+    }, [sendMessage, data]);
 
     // Receive message from socket server
     useEffect(() => {
         if (socket.current) {
-            socket.current.on('receive-message', (data) => {
-                setReceivedMessage(data);
+            socket.current.on('receive-message', (dataChat) => {
+                setReceivedMessage(dataChat);
+                // Cập nhật danh sách phòng chat khi nhận được tin nhắn
+                const updatedChats = data.map((chat) => {
+                    if (chat._id === receivedMessage.chatRoom) {
+                        return {
+                            ...chat,
+                            lastMessageSentAt: receivedMessage.createdAt, // Cập nhật thời gian tin nhắn gần nhất
+                        };
+                    }
+                    return chat;
+                });
+                const sortedChats = updatedChats.sort(
+                    (a, b) => new Date(b.lastMessageSentAt) - new Date(a.lastMessageSentAt),
+                );
+                setDataChat(sortedChats);
             });
         }
-    });
+        // Cleanup khi component unmount
+        return () => {
+            if (socket.current) {
+                socket.current.off('receive-message');
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data, socket]);
 
     useEffect(() => {
         const getAllChats = async () => {
@@ -76,18 +114,20 @@ function ChatPage() {
                         </div> */}
                         <div className={cx('chats')}>
                             {data?.length > 0 &&
-                                data?.map((chat, index) => {
-                                    return (
-                                        <UserItem
-                                            key={index}
-                                            data={chat}
-                                            currentUserId={user.id}
-                                            tempChat={tempChat}
-                                            setTempChat={setTempChat}
-                                            onlineUser={onlineUser}
-                                        />
-                                    );
-                                })}
+                                data
+                                    ?.sort((a, b) => new Date(b.lastMessageSentAt) - new Date(a.lastMessageSentAt))
+                                    .map((chat, index) => {
+                                        return (
+                                            <UserItem
+                                                key={index}
+                                                data={chat}
+                                                currentUserId={user.id}
+                                                tempChat={tempChat}
+                                                setTempChat={setTempChat}
+                                                onlineUser={onlineUser}
+                                            />
+                                        );
+                                    })}
                         </div>
                     </div>
                     <div className={cx('box-chat')}>
