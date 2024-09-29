@@ -39,9 +39,23 @@ function ChatPage() {
     // Sending message to socket server
     useEffect(() => {
         if (sendMessage) {
-            socket.current.emit('send-message', sendMessage);
+            if (sendMessage.receiverId.length === 1) {
+                const messageToSend = {
+                    ...sendMessage,
+                    receiverId: sendMessage.receiverId[0],
+                };
+                socket.current.emit('send-message', messageToSend);
+            } else {
+                sendMessage.receiverId.forEach((receiverId) => {
+                    const messageToSend = {
+                        ...sendMessage,
+                        receiverId: receiverId, // Gửi tới từng receiverId
+                    };
+                    socket.current.emit('send-message', messageToSend);
+                });
+            }
             const updatedChats = data.map((chat) => {
-                if (chat._id === sendMessage.chatRoom) {
+                if (chat._id === sendMessage?.chatRoom) {
                     return {
                         ...chat,
                         lastMessageSentAt: sendMessage.createdAt, // Cập nhật thời gian tin nhắn gần nhất
@@ -58,7 +72,8 @@ function ChatPage() {
                 setDataChat(sortedChats);
             }
         }
-    }, [sendMessage, data]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sendMessage]);
 
     // Receive message from socket server
     useEffect(() => {
@@ -67,7 +82,7 @@ function ChatPage() {
                 setReceivedMessage(dataChat);
                 // Cập nhật danh sách phòng chat khi nhận được tin nhắn
                 const updatedChats = data.map((chat) => {
-                    if (chat._id === receivedMessage.chatRoom) {
+                    if (chat._id === receivedMessage?.chatRoom) {
                         return {
                             ...chat,
                             lastMessageSentAt: receivedMessage.createdAt, // Cập nhật thời gian tin nhắn gần nhất
@@ -88,7 +103,7 @@ function ChatPage() {
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, socket]);
+    }, [data]);
 
     useEffect(() => {
         const getAllChats = async () => {

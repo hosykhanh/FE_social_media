@@ -15,11 +15,11 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
     const [message, setMessage] = useState('');
     const [conversation, setConversation] = useState([]);
     const [partner, setPartner] = useState(null);
+    const [partners, setPartners] = useState([]);
     const scroll = useRef();
 
     // fetch data info of partner user
     useEffect(() => {
-        const partnerId = data?.participants.find((id) => id !== currentUserId);
         const getUserData = async (partnerId) => {
             try {
                 const userData = await userService.getUser(partnerId);
@@ -29,8 +29,25 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
             }
         };
 
-        if (currentUserId && partnerId) {
-            getUserData(partnerId);
+        const getUsersData = async (partnerIds) => {
+            try {
+                // Fetch dữ liệu của từng partner
+                const usersData = await Promise.all(partnerIds.map((partnerId) => userService.getUser(partnerId)));
+                setPartners(usersData);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        if (currentUserId && data?.participants) {
+            if (data?.participants.length > 2) {
+                const otherParticipants = data.participants.filter((_id) => _id !== currentUserId);
+                const selectedParticipants = otherParticipants.slice(0, 2);
+                getUsersData(selectedParticipants);
+            } else {
+                const partnerId = data?.participants.find((_id) => _id !== currentUserId);
+                getUserData(partnerId);
+            }
         }
     }, [currentUserId, data]);
 
@@ -71,8 +88,13 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
             setConversation([...conversation, result]);
 
             // Send message to socket server
-            const receiverId = data?.participants.find((id) => id !== currentUserId);
-            setSendMessage({ ...payload, receiverId, createdAt: result.createdAt });
+            const receiverIds = data?.participants.filter((id) => id !== currentUserId);
+            setSendMessage({
+                ...payload,
+                receiverId: receiverIds,
+                createdAt: result.createdAt,
+                sender: result.sender,
+            });
 
             const dataChat = { lastMessageSentAt: result.createdAt };
             const res = chatService.updateChatRoom(data._id, dataChat);
@@ -93,21 +115,54 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
             {data ? (
                 <>
                     <div className={cx('header')}>
-                        <img src={partner?.avatar || images.defaultAvatar} alt="avt" className={cx('avatar')} />
-                        <span className={cx('username')}>{partner?.name}</span>
+                        {data?.participants.length <= 2 ? (
+                            <>
+                                <img src={partner?.avatar || images.defaultAvatar} alt="AVT" className={cx('avatar')} />
+                                <span className={cx('username')}>{partner?.name}</span>
+                            </>
+                        ) : (
+                            <>
+                                <div className={cx('wrapper-avatar')}>
+                                    <img
+                                        src={partners[0]?.avatar || images.defaultAvatar}
+                                        alt="AVT1"
+                                        className={cx('avatar-group', 'first-avatar')}
+                                    />
+                                    <img
+                                        src={partners[1]?.avatar || images.defaultAvatar}
+                                        alt="AVT2"
+                                        className={cx('avatar-group', 'second-avatar')}
+                                    />
+                                </div>
+                                <span className={cx('username')}>{data?.nameRoom}</span>
+                            </>
+                        )}
                     </div>
                     <div className={cx('content')} ref={scroll}>
                         {conversation &&
                             conversation?.map((chat, index) => {
-                                return chat?.sender === currentUserId ? (
+                                return chat?.sender?._id === currentUserId ? (
                                     <div key={index} className={cx('message', 'message-right')}>
-                                        <span className={cx('message-content')}>{chat?.content}</span>
-                                        <span className={cx('message-time')}>{moment(chat?.createdAt).fromNow()}</span>
+                                        <div className={cx('message-content-time', 'content-time-right')}>
+                                            <span className={cx('message-content')}>{chat?.content}</span>
+                                            <span className={cx('message-time')}>
+                                                {moment(chat?.createdAt).fromNow()}
+                                            </span>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div key={index} className={cx('message', 'message-left')}>
-                                        <span className={cx('message-content')}>{chat?.content}</span>
-                                        <span className={cx('message-time')}>{moment(chat?.createdAt).fromNow()}</span>
+                                        <img
+                                            src={chat?.sender?.avatar || images.defaultAvatar}
+                                            alt="message-AVT"
+                                            className={cx('message-avatar')}
+                                        />
+                                        <div className={cx('message-content-time', 'content-time-left')}>
+                                            <span className={cx('message-content')}>{chat?.content}</span>
+                                            <span className={cx('message-time')}>
+                                                {moment(chat?.createdAt).fromNow()}
+                                            </span>
+                                        </div>
                                     </div>
                                 );
                             })}
