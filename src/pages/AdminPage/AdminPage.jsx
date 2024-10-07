@@ -1,81 +1,44 @@
 import { Menu } from 'antd';
 import { useState } from 'react';
 import { getItem } from '../../utils';
-import { UserOutlined } from '@ant-design/icons';
+import { FormOutlined, UserOutlined } from '@ant-design/icons';
 import classNames from 'classnames/bind';
 
 import styles from './AdminPage.module.scss';
 import TableUser from '../../components/TableUser/TableUser';
-// import { useQuery } from 'react-query';
-// import TableRequest from '../../components/TableRequest/TableRequest';
-// import TableReport from '../../components/TableReport/TableReport';
+import * as postsService from '../../services/postsService';
+import { useQuery } from 'react-query';
+import TablePosts from '../../components/TablePosts/TablePosts';
 
 const cx = classNames.bind(styles);
 
 function AdminPage() {
     const [keySelected, setKeySelected] = useState('user');
-    const items = [
-        getItem('Người dùng', 'user', <UserOutlined />),
-        // getItem('Sản phẩm', 'product', <AppstoreOutlined />),
-        // getItem('Yêu cầu', 'request', <QuestionCircleOutlined />),
-        // getItem('Báo cáo', 'report', <ExclamationCircleOutlined />),
-    ];
+    const items = [getItem('Người dùng', 'user', <UserOutlined />), getItem('Bài viết', 'posts', <FormOutlined />)];
     const handleOnClick = ({ key }) => {
         setKeySelected(key);
     };
 
-    // // --- API GET ALL PRODUCT ---
-    // const getAllProduct = async () => {
-    //     const res = await productService.getAllProduct({ limit: 100 });
-    //     return res;
-    // };
+    // --- API GET ALL POSTS ---
+    const getAllPosts = async () => {
+        const res = await postsService.getAllPosts();
+        return res;
+    };
 
-    // const {
-    //     isLoading: isLoadingProduct,
-    //     data: dataProduct,
-    //     refetch: refetchProduct,
-    // } = useQuery(['products'], getAllProduct, {
-    //     enabled: keySelected === 'product',
-    // });
-
-    // // --- API GET ALL REQUEST ---
-    // const getAllRequest = async () => {
-    //     const res = await contactService.getAllRequest();
-    //     return res;
-    // };
-
-    // const {
-    //     isLoading: isLoadingRequest,
-    //     data: dataRequest,
-    //     refetch: refetchRequest,
-    // } = useQuery(['requests'], getAllRequest, {
-    //     enabled: keySelected === 'request',
-    // });
-
-    // // --- API GET ALL REPORT ---
-    // const getAllReport = async () => {
-    //     const res = await contactService.getAllReport();
-    //     return res;
-    // };
-
-    // const {
-    //     isLoading: isLoadingReport,
-    //     data: dataReport,
-    //     refetch: refetchReport,
-    // } = useQuery(['reports'], getAllReport, {
-    //     enabled: keySelected === 'report',
-    // });
+    const {
+        isLoading: isLoadingPosts,
+        data: dataPosts,
+        refetch: refetchPosts,
+    } = useQuery(['posts'], getAllPosts, {
+        enabled: keySelected === 'posts',
+    });
 
     const renderPage = (key) => {
         switch (key) {
             case 'user':
                 return <TableUser />;
-            // case 'product':
-            //     return <TableProduct isLoading={isLoadingProduct} data={dataProduct} refetch={refetchProduct} />;
-            // case 'request':
-            //     return <TableRequest isLoading={isLoadingRequest} data={dataRequest} refetch={refetchRequest} />;
-            // case 'report':
-            //     return <TableReport isLoading={isLoadingReport} data={dataReport} refetch={refetchReport} />;
+            case 'posts':
+                return <TablePosts isLoading={isLoadingPosts} data={dataPosts} refetch={refetchPosts} />;
             default:
                 return <></>;
         }

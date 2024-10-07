@@ -183,7 +183,7 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
                             </div>
                             <div className={cx('number')}>{stateLike.length}</div>
                         </div>
-                        <div className={cx('number-comment')}>
+                        <div className={cx('number-comment')} onClick={showModalComment}>
                             <div className={cx('number')}>{stateComment.length}</div>
                             <div className={cx('comment')}>bình luận</div>
                         </div>
@@ -237,30 +237,38 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
                             <Loading isLoading={isLoading}>
                                 <div className={cx('wrapper-comment')}>
                                     {stateComment.length ? (
-                                        stateComment.map((users, index) => (
-                                            <div key={index} className={cx('container-comment')}>
-                                                <Avatar
-                                                    src={users?.user?.avatar}
-                                                    size={40}
-                                                    style={{ cursor: 'pointer' }}
-                                                    onClick={() => HandleNavigate(users?.user?._id)}
-                                                />
-                                                <div className={cx('information-comment')}>
-                                                    <div className={cx('user-comment')}>
-                                                        <span
-                                                            className={cx('name-user')}
-                                                            onClick={() => HandleNavigate(users?.user?._id)}
-                                                        >
-                                                            {users?.user?.name}
-                                                        </span>
-                                                        <div className={cx('content-comment')}>{users?.content}</div>
-                                                    </div>
-                                                    <div className={cx('time-comment')}>
-                                                        {timeAgo(users?.updatedAt)}
+                                        stateComment
+                                            .filter((users) => !users.parentComment || users.parentComment === '')
+                                            .map((users, index) => (
+                                                <div key={index} className={cx('container-comment')}>
+                                                    <Avatar
+                                                        src={users?.user?.avatar}
+                                                        size={40}
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => HandleNavigate(users?.user?._id)}
+                                                    />
+                                                    <div className={cx('information-comment')}>
+                                                        <div className={cx('user-comment')}>
+                                                            <span
+                                                                className={cx('name-user')}
+                                                                onClick={() => HandleNavigate(users?.user?._id)}
+                                                            >
+                                                                {users?.user?.name}
+                                                            </span>
+                                                            <div className={cx('content-comment')}>
+                                                                {users?.content}
+                                                            </div>
+                                                        </div>
+                                                        <div className={cx('time-reply-comment')}>
+                                                            <div className={cx('time-comment')}>
+                                                                {timeAgo(users?.updatedAt)}
+                                                            </div>
+                                                            {/* <div className={cx('like-comment')}>Thích</div> */}
+                                                            <div className={cx('reply-comment')}>Phản hồi</div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))
+                                            ))
                                     ) : (
                                         <div className={cx('none-comment')}>Bài viết này chưa có bình luận nào.</div>
                                     )}

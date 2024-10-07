@@ -182,16 +182,30 @@
                 cursor: pointer;
             }
 
+            .name-user:hover {
+                text-decoration: underline;
+            }
+
             .content-comment {
                 font-size: 14px;
             }
         }
 
-        .time-comment {
+        .time-reply-comment {
+            display: flex;
             padding: 0px 10px;
             color: #65676b;
             font-size: 13px;
-            font-weight: 450;
+            font-weight: 500;
+            gap: 5px;
+        }
+
+        .reply-comment {
+            cursor: pointer;
+        }
+
+        .reply-comment:hover {
+            text-decoration: underline;
         }
     }
 }

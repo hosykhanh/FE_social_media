@@ -45,7 +45,6 @@ const deleteUser = async (id) => {
 };
 
 const deleteManyUser = async (data) => {
-    console.log(data);
     const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/users/delete-many`, { data });
     return res.data;
 };

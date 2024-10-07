@@ -38,9 +38,14 @@ const updatePosts = async (id, data) => {
     return res.data;
 };
 
-const deletePosts = async ({ id }) => {
+const deletePosts = async (id) => {
     const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/posts/${id}`);
     return res.data;
 };
 
-export { createPosts, getPosts, getAllPosts, updatePosts, deletePosts, getPostsByUserId, axiosJWT };
+const deleteManyPosts = async (data) => {
+    const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/posts/delete-many`, { data });
+    return res.data;
+};
+
+export { createPosts, getPosts, getAllPosts, updatePosts, deletePosts, getPostsByUserId, deleteManyPosts, axiosJWT };
