@@ -1,0 +1,22 @@
+.title {
+    font-size: 30px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.upload-file {
+    display: flex;
+}
+
+.table {
+    margin-top: 20px;
+}
+
+.action {
+    display: flex;
+    gap: 5px;
+
+    div:hover {
+        text-decoration: underline;
+    }
+}

@@ -1,0 +1,32 @@
+.information {
+    display: flex;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 15px;
+
+    label {
+        color: #65676b;
+    }
+}
+
+.member {
+    font-size: 16px;
+    font-weight: 500;
+    color: #65676b;
+    align-items: center;
+    text-align: center;
+}
+
+.user {
+    cursor: pointer;
+    padding: 5px 8px;
+    align-items: center;
+    border-radius: 8px;
+
+    .name {
+        margin-left: 10px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+}

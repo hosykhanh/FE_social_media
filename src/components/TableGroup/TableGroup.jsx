@@ -1,24 +1,25 @@
 import classNames from 'classnames/bind';
-import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons';
 import { useMutation } from 'react-query';
 import Highlighter from 'react-highlight-words';
 
-import styles from './TablePosts.module.scss';
+import styles from './TableGroup.module.scss';
 import TableComp from '../TableComp/TableComp';
 import { useRef, useState } from 'react';
-import * as postsService from '../../services/postsService';
+import * as chatService from '../../services/chatService';
+import * as userService from '../../services/userService';
 import ModalConfirm from '../ModalConfirm/ModalConfirm';
-import { Button, Input, Space } from 'antd';
-import DrawerDetailPosts from './Component/DrawerDetailPosts';
+import { Button, Input, message, Space, Upload } from 'antd';
+import DrawerDetailGroupChat from './Component/DrawerDetailGroupChat';
 
 const cx = classNames.bind(styles);
 
-function TablePosts({ isLoading, data, refetch }) {
+function TableGroup({ isLoading, data, refetch }) {
     const [isOpenDrawer, setIsOpenDrawer] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('');
 
-    // ----- RENDER TABLE POSTS -----
+    // ----- RENDER TABLE GROUP CHAT -----
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
@@ -48,7 +49,7 @@ function TablePosts({ isLoading, data, refetch }) {
         return formattedDate;
     };
 
-    // Search posts
+    // Search group chat
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
         setSearchText(selectedKeys[0]);
@@ -157,25 +158,18 @@ function TablePosts({ isLoading, data, refetch }) {
     });
     const columns = [
         {
-            title: 'Tên người đăng',
-            dataIndex: 'user',
-            sorter: (a, b) => a.user.name.length - b.user.name.length,
-            ...getColumnSearchProps('user.name'),
-            render: (text, record) => record.user.name,
+            title: 'Tên nhóm chat',
+            dataIndex: 'nameRoom',
+            sorter: (a, b) => a.nameRoom.length - b.nameRoom.length,
+            ...getColumnSearchProps('nameRoom'),
         },
         {
-            title: 'Email người đăng',
-            dataIndex: 'user',
-            sorter: (a, b) => a.user.email.localeCompare(b.user.email),
-            ...getColumnSearchProps('user.email'),
-            render: (text, record) => record.user.email,
+            title: 'Số thành viên',
+            dataIndex: 'participants',
+            render: (text, record) => record.participants.length,
         },
         {
-            title: 'Nội dung bài viết',
-            dataIndex: 'description',
-        },
-        {
-            title: 'Thời gian đăng bài',
+            title: 'Thời gian tạo nhóm',
             dataIndex: 'createdAt',
             render: (text, record) => setTime(record.createdAt),
         },
@@ -186,18 +180,73 @@ function TablePosts({ isLoading, data, refetch }) {
         },
     ];
 
-    // ----- DELETE POST -----
+    // ----- DELETE GROUP CHAT -----
     const mutation = useMutation({
-        mutationFn: (data) => postsService.deletePosts(data),
+        mutationFn: (data) => chatService.deleteChatRoom(data),
     });
 
     const mutationDelMany = useMutation({
-        mutationFn: (data) => postsService.deleteManyPosts(data),
+        mutationFn: (data) => chatService.deleteManyChatRoom(data),
     });
     // -----
+
+    const beforeUpload = (file) => {
+        const isExcel =
+            file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+            file.type === 'application/vnd.ms-excel';
+        if (!isExcel) {
+            message.error('You can only upload Excel files!');
+        }
+        return isExcel;
+    };
+
+    const handleOnChangeFile = async (info) => {
+        if (info.file.status === 'done') {
+            message.success('File uploaded successfully!');
+        } else if (info.file.status === 'error') {
+            message.error('File upload failed!');
+        }
+    };
+
+    // Custom request để xử lý upload file
+    const customRequest = async (options) => {
+        const { onSuccess, onError, file } = options;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await userService.createUsersFromExcel(formData);
+            refetch();
+
+            if (res.status === 'success') {
+                onSuccess(res, file);
+                message.success(res.message || 'Upload thành công!');
+            } else {
+                onError(res);
+                message.error(res.message || 'Có lỗi xảy ra trong quá trình upload!');
+            }
+        } catch (error) {
+            onError(error);
+            message.error('Không thể kết nối tới server hoặc upload thất bại!');
+        }
+    };
+
     return (
         <div className={cx('wrapper')}>
-            <div className={cx('title')}>Quản lý bài viết</div>
+            <div className={cx('title')}>Quản lý nhóm chat</div>
+            <div className={cx('upload-file')}>
+                <Upload
+                    customRequest={customRequest}
+                    onChange={(file) => handleOnChangeFile(file)}
+                    beforeUpload={beforeUpload}
+                >
+                    <Button type="primary">
+                        <UploadOutlined />
+                        Import file
+                    </Button>
+                </Upload>
+            </div>
             <div className={cx('table')}>
                 <TableComp
                     columns={columns}
@@ -215,20 +264,20 @@ function TablePosts({ isLoading, data, refetch }) {
                 />
             </div>
 
-            {/* Drawer detail posts */}
-            <DrawerDetailPosts
+            {/* Drawer detail group chat */}
+            <DrawerDetailGroupChat
                 isOpenDrawer={isOpenDrawer}
                 setIsOpenDrawer={setIsOpenDrawer}
                 rowSelected={rowSelected}
                 refetch={refetch}
             />
 
-            {/* Modal delete posts */}
+            {/* Modal delete group chat */}
             <ModalConfirm
                 isOpen={isDeleteModalOpen}
                 setIsOpen={setIsDeleteModalOpen}
                 rowSelected={rowSelected}
-                title="Bạn có chắc chắn xóa bài viết này không"
+                title="Bạn có chắc chắn xóa nhóm chat này không"
                 refetch={refetch}
                 mutation={mutation}
             />
@@ -236,4 +285,4 @@ function TablePosts({ isLoading, data, refetch }) {
     );
 }
 
-export default TablePosts;
+export default TableGroup;

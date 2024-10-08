@@ -6,6 +6,11 @@ const signUpUser = async (data) => {
     return res.data;
 };
 
+const createUsersFromExcel = async (data) => {
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/users/upload-file-excel`, data);
+    return res.data;
+};
+
 const getUser = async (id) => {
     const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/users/${id}`);
     return res.data;
@@ -49,4 +54,15 @@ const deleteManyUser = async (data) => {
     return res.data;
 };
 
-export { signUpUser, getUser, getAllUser, updateUser, updateAvatar, deleteUser, searchUsers, deleteManyUser, axiosJWT };
+export {
+    signUpUser,
+    getUser,
+    getAllUser,
+    updateUser,
+    updateAvatar,
+    deleteUser,
+    searchUsers,
+    deleteManyUser,
+    createUsersFromExcel,
+    axiosJWT,
+};
