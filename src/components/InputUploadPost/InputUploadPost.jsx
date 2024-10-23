@@ -8,6 +8,7 @@ const cx = classNames.bind(styles);
 
 function InputUploadPost({ onChange, name }) {
     const [imageUrl, setImageUrl] = useState('');
+    const [videoUrl, setVideoUrl] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleChange = (info) => {
@@ -17,8 +18,13 @@ function InputUploadPost({ onChange, name }) {
         }
         if (info.file.status === 'done') {
             setLoading(false);
+            const fileType = info.file.type;
             const url = URL.createObjectURL(info.file.originFileObj);
-            setImageUrl(url);
+            if (fileType.includes('video')) {
+                setVideoUrl(url);
+            } else {
+                setImageUrl(url);
+            }
             onChange(info.file.originFileObj);
         }
     };
@@ -49,15 +55,13 @@ function InputUploadPost({ onChange, name }) {
     const handleRemove = () => {
         // Thêm logic để xử lý việc xóa ảnh
         setImageUrl('');
+        setVideoUrl('');
         message.info('Đã xóa ảnh/video');
     };
 
     return (
         <div className={cx('frame-uploader')}>
-            <CloseOutlined
-                onClick={handleRemove}
-                style={{ position: 'absolute', top: 15, right: 15, cursor: 'pointer', fontSize: 18 }}
-            />
+            <CloseOutlined onClick={handleRemove} className={cx('remove-uploader')} />
             <div className={cx('container-uploader')}>
                 <Upload
                     name="image"
@@ -74,6 +78,10 @@ function InputUploadPost({ onChange, name }) {
                             style={{ width: 'auto', maxHeight: '300px', maxWidth: '100%' }}
                             name={name || ''}
                         />
+                    ) : videoUrl ? (
+                        <video controls style={{ width: 'auto', maxHeight: '300px', maxWidth: '100%' }}>
+                            <source src={videoUrl} type="video/mp4" />
+                        </video>
                     ) : (
                         uploadButton
                     )}
