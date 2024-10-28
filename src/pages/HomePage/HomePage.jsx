@@ -37,12 +37,12 @@ const HomePage = () => {
     useEffect(() => {
         const getAllPosts = async () => {
             setIsLoading(true);
-            const data = await postsService.getAllPosts();
+            const data = await postsService.getPostsSortedByWeight(user?.id);
             setStatePosts(data);
             setIsLoading(false);
         };
         getAllPosts();
-    }, []);
+    }, [user?.id]);
 
     const HandleNavigate = (id) => {
         navigate(`/user/${id}`);
@@ -231,22 +231,20 @@ const HomePage = () => {
                     <Col span={12}>
                         <div className={cx('content')}>
                             <div className={cx('post-content')}>
-                                {statePosts
-                                    ?.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-                                    .map((post) => {
-                                        return (
-                                            <PostFrame
-                                                key={post?._id}
-                                                _id={post?._id}
-                                                image={post?.image}
-                                                description={post?.description}
-                                                favorites={post?.favorites}
-                                                author={post?.user}
-                                                createdAt={post?.createdAt}
-                                                updatedAt={post?.updatedAt}
-                                            />
-                                        );
-                                    })}
+                                {statePosts.map((post) => {
+                                    return (
+                                        <PostFrame
+                                            key={post?._id}
+                                            _id={post?._id}
+                                            image={post?.image}
+                                            description={post?.description}
+                                            favorites={post?.favorites}
+                                            author={post?.user}
+                                            createdAt={post?.createdAt}
+                                            updatedAt={post?.updatedAt}
+                                        />
+                                    );
+                                })}
                             </div>
                         </div>
                     </Col>

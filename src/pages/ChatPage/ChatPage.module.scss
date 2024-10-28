@@ -16,6 +16,11 @@
     width: 30%;
     background-color: #fff;
     border-radius: 20px;
+
+    .chats {
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
+    }
 }
 
 .title {

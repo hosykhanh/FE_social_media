@@ -65,8 +65,8 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
         navigate(`/user/${id}`);
     };
 
-    function timeAgo(updatedAt) {
-        const timeUpdate = new Date(updatedAt);
+    function timeAgo(createdAt) {
+        const timeUpdate = new Date(createdAt);
         const now = new Date();
         const diffInMilliseconds = now - timeUpdate;
 
@@ -148,7 +148,7 @@ const PostFrame = ({ _id, image, description, favorites, author, createdAt, upda
                         <span className={cx('name')} onClick={() => HandleNavigate(author?._id)}>
                             {author?.name}
                         </span>
-                        <div className={cx('time')}>{timeAgo(updatedAt)}</div>
+                        <div className={cx('time')}>{timeAgo(createdAt)}</div>
                     </div>
                     <div className={cx('func')}>
                         <div className={cx('func-icon')}>
