@@ -170,7 +170,7 @@ function TableUser() {
         },
     ];
     const getAllUser = async () => {
-        const res = await userService.getAllUser({ access_token: user.access_token });
+        const res = await userService.getAllUser();
         return res;
     };
 

@@ -36,10 +36,20 @@ const HomePage = () => {
 
     useEffect(() => {
         const getAllPosts = async () => {
+            if (!user?.id) {
+                const data = await postsService.getAllPosts();
+                setStatePosts(data);
+                return;
+            }
             setIsLoading(true);
-            const data = await postsService.getPostsSortedByWeight(user?.id);
-            setStatePosts(data);
-            setIsLoading(false);
+            try {
+                const data = await postsService.getPostsSortedByWeight(user.id);
+                setStatePosts(data);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            } finally {
+                setIsLoading(false);
+            }
         };
         getAllPosts();
     }, [user?.id]);
@@ -182,37 +192,37 @@ const HomePage = () => {
     };
 
     return (
-        <Loading isLoading={isLoading}>
-            <div className={cx('wapper')}>
-                <Row>
-                    <Col span={6}>
-                        <div className={cx('navbar-left')}>
-                            <Menu
-                                defaultSelectedKeys={['1']}
-                                defaultOpenKeys={['sub1']}
-                                mode="inline"
-                                theme="light"
-                                inlineCollapsed={collapsed}
-                                items={items}
-                                className={cx('menu')}
-                            />
-                        </div>
-                        <Button type="primary" onClick={toggleCollapsed} className={cx('collapsed-btn')}>
-                            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                        </Button>
-                        <Modal
-                            title={<div className={cx('title-post')}>Tạo bài viết</div>}
-                            open={isModalOpenPost}
-                            onCancel={handleCancelPost}
-                            width="35%"
-                            footer={
-                                <div>
-                                    <Button type="primary" className={cx('button-post')} onClick={onClickSendPost}>
-                                        Đăng
-                                    </Button>
-                                </div>
-                            }
-                        >
+        <div className={cx('wapper')}>
+            <Row>
+                <Col span={6}>
+                    <div className={cx('navbar-left')}>
+                        <Menu
+                            defaultSelectedKeys={['1']}
+                            defaultOpenKeys={['sub1']}
+                            mode="inline"
+                            theme="light"
+                            inlineCollapsed={collapsed}
+                            items={items}
+                            className={cx('menu')}
+                        />
+                    </div>
+                    <Button type="primary" onClick={toggleCollapsed} className={cx('collapsed-btn')}>
+                        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                    </Button>
+                    <Modal
+                        title={<div className={cx('title-post')}>Tạo bài viết</div>}
+                        open={isModalOpenPost}
+                        onCancel={handleCancelPost}
+                        width="35%"
+                        footer={
+                            <div>
+                                <Button type="primary" className={cx('button-post')} onClick={onClickSendPost}>
+                                    Đăng
+                                </Button>
+                            </div>
+                        }
+                    >
+                        <Loading isLoading={isLoading}>
                             <div className={cx('content-post')}>
                                 <div className={cx('user')}>
                                     <Avatar src={user?.avatar} size={40} onClick={handleNavigateProfile} />
@@ -226,9 +236,11 @@ const HomePage = () => {
                                 ></textarea>
                                 <InputUploadPost type="file" onChange={handleOnChangeImage}></InputUploadPost>
                             </div>
-                        </Modal>
-                    </Col>
-                    <Col span={12}>
+                        </Loading>
+                    </Modal>
+                </Col>
+                <Col span={12}>
+                    <Loading isLoading={isLoading}>
                         <div className={cx('content')}>
                             <div className={cx('post-content')}>
                                 {statePosts.map((post) => {
@@ -247,42 +259,38 @@ const HomePage = () => {
                                 })}
                             </div>
                         </div>
-                    </Col>
-                    <Col span={6}>
-                        <div className={cx('content-right')}>
-                            <div className={cx('slide-wrapper')}>
-                                <div className={cx('slider')}>
-                                    <SliderComponent alt="slider" width="20%" images={slide} />
-                                </div>
-                            </div>
-                            <div className={cx('contact-user')}>
-                                <div className={cx('contact')}>Người liên hệ</div>
-                                {stateUser
-                                    .filter((users) => users?._id !== user?.id)
-                                    .map((users, index) => (
-                                        <div
-                                            className={cx('user')}
-                                            key={index}
-                                            onClick={() => HandleNavigate(users?._id)}
-                                        >
-                                            {users?.avatar ? (
-                                                <Avatar src={users?.avatar} size={40} />
-                                            ) : (
-                                                <Avatar
-                                                    style={{ backgroundColor: '#87d068' }}
-                                                    icon={<UserOutlined />}
-                                                    size={40}
-                                                />
-                                            )}
-                                            <span className={cx('name')}>{users?.name}</span>
-                                        </div>
-                                    ))}
+                    </Loading>
+                </Col>
+                <Col span={6}>
+                    <div className={cx('content-right')}>
+                        <div className={cx('slide-wrapper')}>
+                            <div className={cx('slider')}>
+                                <SliderComponent alt="slider" width="20%" images={slide} />
                             </div>
                         </div>
-                    </Col>
-                </Row>
-            </div>
-        </Loading>
+                        <div className={cx('contact-user')}>
+                            <div className={cx('contact')}>Người liên hệ</div>
+                            {stateUser
+                                .filter((users) => users?._id !== user?.id)
+                                .map((users, index) => (
+                                    <div className={cx('user')} key={index} onClick={() => HandleNavigate(users?._id)}>
+                                        {users?.avatar ? (
+                                            <Avatar src={users?.avatar} size={40} />
+                                        ) : (
+                                            <Avatar
+                                                style={{ backgroundColor: '#87d068' }}
+                                                icon={<UserOutlined />}
+                                                size={40}
+                                            />
+                                        )}
+                                        <span className={cx('name')}>{users?.name}</span>
+                                    </div>
+                                ))}
+                        </div>
+                    </div>
+                </Col>
+            </Row>
+        </div>
     );
 };
 

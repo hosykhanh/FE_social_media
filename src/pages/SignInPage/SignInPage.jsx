@@ -35,7 +35,7 @@ const SignInPage = () => {
     const { isLoading, isSuccess, data } = mutation;
 
     const handleGetDetailUser = async (id, access_token) => {
-        const res = await userService.getUser(id, access_token);
+        const res = await userService.getUser(id);
         dispatch(updateUser({ ...res, access_token }));
     };
 

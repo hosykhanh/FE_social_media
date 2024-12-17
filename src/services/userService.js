@@ -7,7 +7,7 @@ const signUpUser = async (data) => {
 };
 
 const createUsersFromExcel = async (data) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/users/upload-file-excel`, data);
+    const res = await axiosJWT.post(`${process.env.REACT_APP_API_URL}/users/upload-file-excel`, data);
     return res.data;
 };
 
@@ -22,7 +22,7 @@ const getAllUser = async () => {
 };
 
 const searchUsers = async (id, search) => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/users/${id}/suggestions?search=${search}`);
+    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/users/${id}/suggestions?search=${search}`);
     return res.data;
 };
 
@@ -35,7 +35,7 @@ const updateAvatar = async (id, avatar) => {
     const formData = new FormData();
     formData.append('avatar', avatar.avatar);
 
-    const res = await axios.put(`${process.env.REACT_APP_API_URL}/users/${id}/avatar`, formData, {
+    const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/users/${id}/avatar`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
