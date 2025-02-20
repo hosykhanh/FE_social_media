@@ -1,0 +1,49 @@
+.wapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+
+    .wapper-content {
+        margin-right: 30px;
+        margin-top: 30px;
+        padding-right: 20px;
+        width: 35%;
+
+        .noqrcode-content {
+            margin-top: 70px;
+            margin-bottom: 200px;
+        }
+
+        .app-name {
+            text-align: center;
+            font-size: 30px;
+            color: #4176cb;
+            font-weight: 500;
+
+            span {
+                color: #4176cb;
+            }
+        }
+
+        .form {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .otp {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .qrcode {
+            object-fit: cover;
+            min-height: 350px;
+        }
+    }
+
+    .image {
+        padding-top: 50px;
+    }
+}

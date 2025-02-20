@@ -7,6 +7,7 @@ import PostPage from '../pages/PostPage/PostPage';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import SignInPage from '../pages/SignInPage/SignInPage';
 import SignUpPage from '../pages/SignUpPage/SignUpPage';
+import VerifyOtpPage from '../pages/VerifyOtpPage/VerifyOtpPage';
 
 export const routes = [
     {
@@ -22,6 +23,11 @@ export const routes = [
     {
         path: '/sign-up',
         page: SignUpPage,
+        layout: DefaultLayout,
+    },
+    {
+        path: '/verify-otp',
+        page: VerifyOtpPage,
         layout: DefaultLayout,
     },
     {

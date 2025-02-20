@@ -2,15 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 import styles from './SignInPage.module.scss';
 import classNames from 'classnames/bind';
-import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { loginUser } from '../../services/authService';
-import * as userService from '../../services/userService';
-import * as messages from '../../components/Message/Message';
-import { updateUser } from '../../redux/slice/userSlice';
 import checkStatusResponse from '../../utils/checkStatusResponse';
-import { jwtDecode } from 'jwt-decode';
 import { Image, Input, message } from 'antd';
 import Button from '../../components/Button/Button';
 import Loading from '../../components/Loading/Loading';
@@ -22,7 +17,6 @@ const cx = classNames.bind(styles);
 const SignInPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const dispatch = useDispatch();
     const location = useLocation();
 
     const navigate = useNavigate();
@@ -34,25 +28,12 @@ const SignInPage = () => {
 
     const { isLoading, isSuccess, data } = mutation;
 
-    const handleGetDetailUser = async (id, access_token) => {
-        const res = await userService.getUser(id);
-        dispatch(updateUser({ ...res, access_token }));
-    };
-
     useEffect(() => {
         if (isSuccess && checkStatusResponse(data)) {
-            messages.success('Đăng nhập thành công');
-            localStorage.setItem('access_token', JSON.stringify(data?.access_token));
-            if (data?.access_token) {
-                const decoded = jwtDecode(data?.access_token);
-                if (decoded?.id) {
-                    handleGetDetailUser(decoded?.id, data?.access_token);
-                }
-            }
             if (location?.state) {
                 navigate(location?.state);
             } else {
-                navigate('/');
+                navigate('/verify-otp', { state: { loginRespone: data }});
             }
         } else if (data?.status === 'err') {
             message.error(data?.message);
