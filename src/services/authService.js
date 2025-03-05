@@ -25,4 +25,13 @@ const refreshToken = async () => {
     return res.data;
 };
 
-export { loginUser, logoutUser, verifyOtp, refreshToken };
+const getDecryptedPrivateKey = async (encryptedPrivateKey, aesEncryptedKey, iv) => {
+    const res = await axiosJWT.post(`${process.env.REACT_APP_API_URL}/auth/decrypt-private-key`, {
+        encryptedPrivateKey,
+        aesEncryptedKey,
+        iv,
+    });
+    return res.data;
+};
+
+export { loginUser, logoutUser, verifyOtp, refreshToken, getDecryptedPrivateKey };

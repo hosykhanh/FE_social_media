@@ -78,7 +78,7 @@ function ChatPage() {
     // Receive message from socket server
     useEffect(() => {
         if (socket.current) {
-            socket.current.on('receive-message', (dataChat) => {
+            socket.current.on('receive-message', async(dataChat) => {
                 setReceivedMessage(dataChat);
                 // Cập nhật danh sách phòng chat khi nhận được tin nhắn
                 const updatedChats = data.map((chat) => {

@@ -5,9 +5,11 @@ import moment from 'moment';
 
 import * as userService from '../../services/userService';
 import * as chatService from '../../services/chatService';
+import * as authService from '../../services/authService';
 import styles from './BoxChat.module.scss';
 import Button from '../Button/Button';
 import images from '../../assets';
+import { decryptMessage, encryptGroupMessage } from '../../security/encryptMessage/encryption';
 
 const cx = classNames.bind(styles);
 
@@ -16,6 +18,8 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
     const [conversation, setConversation] = useState([]);
     const [partner, setPartner] = useState(null);
     const [partners, setPartners] = useState([]);
+    const [groupPublicKeys, setGroupPublicKeys] = useState([]);
+    const [privateKey, setPrivateKey] = useState('');
     const scroll = useRef();
 
     // fetch data info of partner user
@@ -40,6 +44,24 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
         };
 
         if (currentUserId && data?.participants) {
+            const fetchKeys = async () => {
+                const keys = await Promise.all(
+                    data?.participants.map(async (member) => {
+                        const userKeys = await userService.getUser(member);
+                        return userKeys.publicKey;
+                    }),
+                );
+                setGroupPublicKeys(keys);
+                const userKeys = await userService.getUser(currentUserId);
+                const userPrivateKey = await authService.getDecryptedPrivateKey(
+                    userKeys.encryptedPrivateKey,
+                    userKeys.aesEncryptedKey,
+                    userKeys.iv,
+                );
+                setPrivateKey(userPrivateKey);
+            };
+            fetchKeys();
+
             if (data?.participants.length > 2) {
                 const otherParticipants = data.participants.filter((_id) => _id !== currentUserId);
                 const selectedParticipants = otherParticipants.slice(0, 2);
@@ -52,9 +74,14 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
     }, [currentUserId, data]);
 
     useEffect(() => {
-        if (receivedMessage && receivedMessage?.chatRoom === data?._id) {
-            setConversation([...conversation, receivedMessage]);
-        }
+        const getReceivedMessage = async () => {
+            if (receivedMessage && receivedMessage?.chatRoom === data?._id) {
+                const decryptedMessage = await decryptMessage(privateKey, receivedMessage.content);
+                receivedMessage.content = decryptedMessage;
+                setConversation([...conversation, receivedMessage]);
+            }
+        };
+        getReceivedMessage();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [receivedMessage]);
 
@@ -63,12 +90,21 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
         const getMessages = async () => {
             try {
                 const messagesData = await chatService.getMessages(data?._id);
-                setConversation(messagesData);
+                const decryptedMessagesData = await Promise.all(
+                    messagesData.map(async (message) => {
+                        const decryptedMessage = await decryptMessage(privateKey, message.content);
+                        return {
+                            ...message,
+                            content: decryptedMessage,
+                        };
+                    }),
+                );
+                setConversation(decryptedMessagesData);
             } catch (error) {}
         };
 
         if (data) getMessages();
-    }, [data]);
+    }, [data, privateKey]);
 
     const handleChange = (value) => {
         setMessage(value);
@@ -76,14 +112,16 @@ function BoxChat({ data, currentUserId, setSendMessage, receivedMessage }) {
 
     const handleSendMessage = async () => {
         try {
+            const encryptedMessage = await encryptGroupMessage(groupPublicKeys, message);
             const payload = {
                 chatRoom: data?._id,
                 sender: currentUserId,
-                content: message,
+                content: encryptedMessage,
             };
 
             // Send message to database
             const result = await chatService.createMessage(payload);
+            result.content = message;
             setMessage('');
             setConversation([...conversation, result]);
 
